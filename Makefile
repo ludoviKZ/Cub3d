@@ -1,12 +1,13 @@
-FILES = legacy.c misc.c printmap.c play.c checks.c draw2D.c	
+FILES = draw2D.c main.c player.c
 OBJ = $(FILES:.c=.o)
-NAME = so_long
+NAME = Cub3D
 MLX_PATH = minilibx/
 MLX_LIB = $(MLX_PATH)libmlx.a
 LIBFT_PATH = libft/
 LIBFT_LIB = $(LIBFT_PATH)libft.a
 CFLAGS = -Wall -Wextra -Werror -g
 MLX_FLAGS = -lX11 -lXext -Lminilibx -lmlx 
+MATH_LIBS = -lm
 CC = cc
 RM = rm -f
 
@@ -20,7 +21,7 @@ adittionallibs:
 	@make -C $(LIBFT_PATH) all
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(MLX_FLAGS) $(OBJ) $(MLX_LIB) $(LIBFT_LIB) -o $(NAME)
+	$(CC) $(CFLAGS) $(MLX_FLAGS) $(OBJ) $(MLX_LIB) $(LIBFT_LIB) $(MATH_LIBS) -o $(NAME)
 	
 clean:
 	make -C $(MLX_PATH) clean

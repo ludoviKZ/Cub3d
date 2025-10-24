@@ -1,40 +1,8 @@
 #include "libft/libft.h"
 #include "minilibx/mlx.h"
+#include "Cub3D.h"
 
-
-int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
-{
-	int x;
-	int y;
-	int square_size;
-
-	square_size = 15; // Define the size of each square
-	y = 0;
-	while (y < size[1])
-	{
-		x = 0;
-		while (x < size[0])
-		{
-			if (map[y][x] == '1') // Assuming '1' represents a wall
-			{
-				// Draw a square at (x * square_size, y * square_size)
-				// with dimensions square_size x square_size
-				// and a specific color for walls
-				draw_filled_square_mlx_pixel_put(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 70);
-			}
-			else if (map[y][x] == '0') // Assuming '0' represents empty space
-			{
-				// Draw a square for empty space
-				draw_filled_square_mlx_pixel_put(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 120);
-			}
-			// Add more conditions for different map elements as needed
-			x++;
-		}
-		y++;
-	}
-	return 0;
-}
-void draw_filled_square_mlx_pixel_put(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color)
+void draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color)
 {
     int x;
     int y;
@@ -50,4 +18,62 @@ void draw_filled_square_mlx_pixel_put(void *mlx_ptr, void *win_ptr, int x0, int 
         }
         y++;
     }
+}
+int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
+{
+	int x;
+	int y;
+	int square_size;
+
+	square_size = 30; // Define the size of each square
+	y = 0;
+	while (y < size[1])
+	{
+		x = 0;
+		while (x < size[0])
+		{
+			if (map[y][x] == '1') // Assuming '1' represents a wall
+			{
+				// Draw a square at (x * square_size, y * square_size)
+				// with dimensions square_size x square_size
+				// and a specific color for walls
+				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0x808080);
+			}
+			else if (map[y][x] == '0') // Assuming '0' represents empty space
+			{
+				// Draw a square for empty space
+				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0xFFFFFF);
+			}
+			// Add more conditions for different map elements as needed
+			x++;
+		}
+		y++;
+	}
+	return 0;
+}
+void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color)
+{
+	int dx = abs(x2 - x1);
+	int dy = abs(y2 - y1);
+	int sx = (x1 < x2) ? 1 : -1;
+	int sy = (y1 < y2) ? 1 : -1;
+	int err = dx - dy;
+
+	while (1)
+	{
+		mlx_pixel_put(mlx_ptr, win_ptr, x1, y1, color);
+		if (x1 == x2 && y1 == y2)
+			break;
+		int err2 = err * 2;
+		if (err2 > -dy)
+		{
+			err -= dy;
+			x1 += sx;
+		}
+		if (err2 < dx)
+		{
+			err += dx;
+			y1 += sy;
+		}
+	}
 }
