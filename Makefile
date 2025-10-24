@@ -1,6 +1,6 @@
-FILES = legacy.c misc.c printmap.c play.c checks.c draw2D.c	
+FILES = main.c parsing.c utils.c
 OBJ = $(FILES:.c=.o)
-NAME = so_long
+NAME = cub3d
 MLX_PATH = minilibx/
 MLX_LIB = $(MLX_PATH)libmlx.a
 LIBFT_PATH = libft/
