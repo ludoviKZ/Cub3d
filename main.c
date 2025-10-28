@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/10/24 19:37:07 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/28 14:28:52 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ int	key_hook(int keycode, t_vars *vars)
 		rotate(vars, -5);
 	else if (keycode == 'o' ) // Right arrow key
 		rotate(vars, 5);
+	else if (keycode == 'f') // Escape key
+	{
+		draw_field_of_view(vars, 0xaaaaaa); // Redraw FOV after movement
+	}
 	return (0);
 }
 
@@ -40,7 +44,7 @@ int main(void)
 		"1000000001",
 		"1011111101",
 		"1000000001",
-		"10111110001",
+		"1011111001",
 		"1000000001",
 		"1011111101",
 		"1000000001",

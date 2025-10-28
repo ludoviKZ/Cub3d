@@ -37,8 +37,10 @@ void	draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int col
 int		init_player(t_vars *vars);
 void	move(t_vars *vars, int ver, int side);
 void	rotate(t_vars *vars, int angle);
-void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color);
+void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness);
 int validate_move(t_vars *vars, int ver, int side);
-
+void draw_field_of_view(t_vars *vars, int color);
+void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
+void	redraw_scene(t_vars *vars);
 
 #endif
