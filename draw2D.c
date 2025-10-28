@@ -2,7 +2,7 @@
 #include "minilibx/mlx.h"
 
 
-int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
+int draw_square2D(char **map, void *mlx_ptr, void *win_ptr)
 {
 	int x;
 	int y;
@@ -10,10 +10,10 @@ int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
 
 	square_size = 15; // Define the size of each square
 	y = 0;
-	while (y < size[1])
+	while (map[y] != NULL)
 	{
 		x = 0;
-		while (x < size[0])
+		while (x < map[y][x] != '\0')
 		{
 			if (map[y][x] == '1') // Assuming '1' represents a wall
 			{

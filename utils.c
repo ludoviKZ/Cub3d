@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/24 18:53:15 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/10/28 16:12:18 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Cub3d.h"
+#include "Cub3D.h"
 
 int mat_free(char **matrix)
 {

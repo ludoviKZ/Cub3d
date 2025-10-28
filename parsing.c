@@ -6,11 +6,11 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/28 15:56:17 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/28 16:12:09 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Cub3d.h"
+#include "Cub3D.h"
 
 void check_player(t_parsing *p, char **map, int i, int j)
 {
