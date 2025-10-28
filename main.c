@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:39:13 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/24 18:54:39 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/10/28 15:55:40 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3d.h"
 
-int key_hook(int keycode, t_data *data)
+int key_hook(int keycode, t_vars *data)
 {
     if (keycode == 65307)
 	{
@@ -64,7 +64,7 @@ int parsing_init(t_parsing *parsing)
 
 int    main(int argc, char **argv)
 {
-    t_data *data;
+    t_vars *data;
     t_parsing *p;
 
     p = malloc(sizeof(t_parsing));
@@ -74,7 +74,7 @@ int    main(int argc, char **argv)
         return (1);
     }
     parsing_init(p);
-    data = malloc(sizeof(t_data));
+    data = malloc(sizeof(t_vars));
     data->parsing = p;
     if (argc != 2)
     {
