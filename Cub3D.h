@@ -24,6 +24,7 @@ typedef struct s_player
 
 typedef struct s_parsing {
     char	**map;
+	char	**textures;
     int		map_h;
     int     pl_x;
     int     pl_y;
@@ -45,6 +46,7 @@ int parsing(t_parsing *parsing, char *map_file);
 int parsing_init(t_parsing *parsing);
 int line_count(char *map_file);
 int mat_free(char **matrix);
+int check_textures(t_parsing *p);
 
 
 // Ludo

@@ -3,77 +3,109 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/28 16:12:09 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/28 18:44:02 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-void check_player(t_parsing *p, char **map, int i, int j)
+int check_player(t_parsing *p, char **map, int i, int j)
 {
+    static int cont = 0;
     if (map[i][j] == 'N' || map[i][j] == 'S' || map[i][j] == 'E' || map[i][j] == 'W')
     {
         p->pl_x = j;
         p->pl_y = i;
         p->pl_dir = map[i][j];
+        cont++;
+        return (cont);
     }
+    return (cont);
 }
 
-// int check_char(char c, char *set)
-// {
-//     int i;
+int check_fl(char *line)
+{
+    int j;
 
-//     i = 0;
-//     while (set[i])
-//     {
-//         if (c == set[i])
-//             return (1);
-//         i++;
-//     }
-//     return (0);
-// }
+    j = 0;
+    while (line[j] != '\n' && line[j] != '\0')
+    {
+        if (line[j] != '1' && line[j] != ' ')
+            return (-1);
+        j++;
+    }
+    return (0);
+}
 
-// int check_surrounded(t_parsing *p, char **map, int i, int j)
-// {
-//     int a;
-//     int b;
-//     char c[] = {'1', ' ', '\n', '\0'};
+int flood_fill(char **map, int x, int y)
+{
+    if (map[y] == NULL || x < 0 || y < 0 || map[y][x] == '1' || map[y][x] == 'F' ||  map[y][x] == '\n')
+        return (0);
+    if (map[y][x] == ' ')
+        map[y][x] = 'F';
+    else
+        return (-1);
+    if (flood_fill(map, x + 1, y) == -1)
+        return (-1);
+    if (flood_fill(map, x - 1, y) == -1)
+        return (-1);
+    if (flood_fill(map, x, y + 1) == -1)
+        return (-1);
+    if (flood_fill(map, x, y - 1) == -1)
+        return (-1);
+    return (0);
+}
 
-//     a = 0;
-//     if (map[i][j] == ' ')
-//     {
-        
-//     }
-//     return (0);
-// }
+int check_char(char **map)
+{
+    int i;
+    int j;
 
+    i = 0;
+    while (map[i])
+    {
+        j = 0;
+        while (map[i][j] != '\n' && map[i][j] != '\0')
+        {
+            if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != 'N' &&
+                map[i][j] != 'S' && map[i][j] != 'E' && map[i][j] != 'W' && map[i][j] != ' ')
+                return (-1);
+            j++;
+        }
+        i++;
+    }
+    return (0);
+}
+
+/*the map check has to check if:
+if the line above is greater it has to check when the last 0 is compared to the last 1
+if there is a space it has to be surrounded by 1 or space (flood fill algorithm)
+*/
 int check_map(t_parsing *p, char **map)
 {
     int i;
     int j;
 
     i = 0;
-    j = 0;
     p->pl_x = -1;
+    if (check_char(map) == -1)
+        return (-1);
     while (map[i])
     {
+        j = 0;
         while (map[i][j] != '\n' && map[i][j] != '\0')
         {
-            if ((i == 0 && map[i][j] != '1') || (i == p->map_h - 1 && map[i][j] != '1') ||
-                (j == 0 && map[i][j] != '1') || (j == ft_strlen(map[i]) - 1 && map[i][j] != '1'))
+            if (i > 0 &&(ft_strlen(map[i - 1]) - 1 <= j && map[i][j] == '0'))
                 return (-1);
-            if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != 'N' &&
-                map[i][j] != 'S' && map[i][j] != 'E' && map[i][j] != 'W')
+            if (map[i][j] == ' ' && flood_fill(map, j, i) == -1)
                 return (-1);
-            // if (check_surrounded(p, map, i, j) == -1)
-            //     return (-1);
-            check_player(p, map, i, j);
+            if (check_player(p, map, i, j) > 1)
+                return (-1);
             j++;
         }
-        j = 0;
         i++;
     }
     if (p->pl_x == -1)
@@ -100,7 +132,7 @@ int parsing(t_parsing *parsing, char *map_file)
 {
     int fd;
     int i;
-    
+
     parsing->map_h = line_count(map_file);
     if (parsing->map_h == -1)
         return (-1);
@@ -120,6 +152,8 @@ int parsing(t_parsing *parsing, char *map_file)
         parsing->map[++i] = get_next_line(fd);
     parsing->map[i] = NULL;
     close(fd);
+    // if (check_textures(parsing) == -1)
+    //     return (perror("Error"), -1);
     if (check_map(parsing, parsing->map) == -1)
         return (perror("Error"), -1);
     return (0);

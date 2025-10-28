@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/10/28 16:33:24 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/28 18:44:54 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ int parsing_init(t_parsing *parsing)
     parsing->pl_x = -1;
     parsing->pl_y = -1;
     parsing->pl_dir = '\0';
+    parsing->textures = malloc(sizeof(char *) * 7);
+    if (!parsing->textures)
+    {
+        printf("Error\n");
+        return (-1);
+    }
     return (0);
 }
 
@@ -48,6 +54,7 @@ int	key_hook(int keycode, t_vars *vars)
 		mlx_destroy_window(vars->mlx, vars->win);
 		mlx_destroy_display(vars->mlx);
 		mat_free(vars->parsing->map);
+		mat_free(vars->parsing->textures);
 		free(vars->parsing);
 		free(vars);
 		exit(EXIT_SUCCESS);
