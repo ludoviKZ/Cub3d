@@ -6,8 +6,8 @@ int	init_player(t_vars *vars)
 	int	y;
 	int	x;
 
-	y = 230;
-	x = 200;
+	y = vars->parsing->pl_y * 30;
+	x = vars->parsing->pl_x * 30;
 	vars->player = (t_player *)malloc(sizeof(t_player));
 	if (!vars->player)
 		return (-1);

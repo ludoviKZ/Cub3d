@@ -6,13 +6,24 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/10/28 16:17:16 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/28 16:33:24 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "minilibx/mlx.h"
 #include "Cub3D.h"
+
+
+int parsing_init(t_parsing *parsing)
+{
+    parsing->map = NULL;
+    parsing->map_h = 0;
+    parsing->pl_x = -1;
+    parsing->pl_y = -1;
+    parsing->pl_dir = '\0';
+    return (0);
+}
 
 int	key_hook(int keycode, t_vars *vars)
 {
@@ -70,8 +81,10 @@ int main(int argc, char **argv)
     }
 	vars->mlx = mlx_init();
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
-	draw_square2D(vars->map, vars->mlx, vars->win);
-	init_player(&vars);
+	printf("Map loaded successfully. Initializing player...\n");
+	vars->map = p->map;
+	redraw_scene(vars);
+	init_player(vars);
 	mlx_key_hook(vars->win, key_hook, vars);
 	mlx_loop(vars->mlx);
 	return (0);

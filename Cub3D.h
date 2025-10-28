@@ -42,11 +42,13 @@ typedef struct s_vars
 
 // Kris
 int parsing(t_parsing *parsing, char *map_file);
+int parsing_init(t_parsing *parsing);
+int line_count(char *map_file);
 int mat_free(char **matrix);
 
 
 // Ludo
-int		draw_square2D(char **map, void *mlx_ptr, void *win_ptr);
+int		draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr);
 void	draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color);
 int		init_player(t_vars *vars);
 void	move(t_vars *vars, int ver, int side);

@@ -32,19 +32,10 @@ int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
 		x = 0;
 		while (x < size[0])
 		{
-			if (map[y][x] == '1') // Assuming '1' represents a wall
-			{
-				// Draw a square at (x * square_size, y * square_size)
-				// with dimensions square_size x square_size
-				// and a specific color for walls
-				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0x808080);
-			}
-			else if (map[y][x] == '0') // Assuming '0' represents empty space
-			{
-				// Draw a square for empty space
+			if (map[y][x] == '0' || map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'W' || map[y][x] == 'E')
 				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0xFFFFFF);
-			}
-			// Add more conditions for different map elements as needed
+			else if (map[y][x] == '1')
+				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0x808080);
 			x++;
 		}
 		y++;
@@ -69,6 +60,7 @@ void	redraw_scene(t_vars *vars)
 		cols = ft_strlen(vars->map[0]);
 	size[0] = cols;
 	size[1] = rows;
+	printf("Redrawing scene with map size %d x %d\n", cols, rows);
 	draw_square2D(vars->map, size, vars->mlx, vars->win);
 }
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness)
