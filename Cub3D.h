@@ -22,17 +22,31 @@ typedef struct s_player
 	int	dir;
 }	t_player;
 
+typedef struct s_parsing {
+    char	**map;
+    int		map_h;
+    int     pl_x;
+    int     pl_y;
+    char    pl_dir;
+}	t_parsing;
+
 typedef struct s_vars
 {
 	void	*mlx;
 	void	*win;
 	char	**map;
 	int		fd;
+	t_parsing    *parsing;
 	t_player	*player;
 }	t_vars;
 
+// Kris
+int parsing(t_parsing *parsing, char *map_file);
+int mat_free(char **matrix);
 
-int		draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr);
+
+// Ludo
+int		draw_square2D(char **map, void *mlx_ptr, void *win_ptr);
 void	draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color);
 int		init_player(t_vars *vars);
 void	move(t_vars *vars, int ver, int side);

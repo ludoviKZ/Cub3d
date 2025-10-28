@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/10/28 14:28:52 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/28 16:09:52 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,34 +32,47 @@ int	key_hook(int keycode, t_vars *vars)
 	{
 		draw_field_of_view(vars, 0xaaaaaa); // Redraw FOV after movement
 	}
+	else if (keycode == 65307) // Escape key
+	{
+		mlx_destroy_window(vars->mlx, vars->win);
+		mlx_destroy_display(vars->mlx);
+		mat_free(vars->parsing->map);
+		free(vars->parsing);
+		free(vars);
+		exit(EXIT_SUCCESS);
+	}
 	return (0);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
-	t_vars vars;
-	int map_size[2] = {10, 10}; // Example map size (width, height)
-	char *example_map[] = {
-		"1111111111",
-		"1000000001",
-		"1011111101",
-		"1000000001",
-		"1011111001",
-		"1000000001",
-		"1011111101",
-		"1000000001",
-		"1111111111",
-		"1111111111",
-		NULL
-	};
+	t_vars *vars;
+    t_parsing *p;
 
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, 1024, 512, "2D Map");
-	/* make the map available to other code that validates moves */
-	vars.map = example_map;
-	draw_square2D(example_map, map_size, vars.mlx, vars.win);
+   	p = malloc(sizeof(t_parsing));
+    if (!p)
+    {
+        perror("Memory allocation failed");
+        return (1);
+    }
+    parsing_init(p);
+    vars = malloc(sizeof(t_vars));
+    vars->parsing = p;
+    if (argc != 2)
+    {
+        printf("Usage: %s <map_file>\n", argv[0]);
+        return (1);
+    }
+    if (parsing(p, argv[1]) < 0)
+    {
+        printf("Parsing failed\n");
+        return (1);
+    }
+	vars->mlx = mlx_init();
+	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
+	draw_square2D(vars->map, vars->mlx, vars->win);
 	init_player(&vars);
-	mlx_key_hook(vars.win, key_hook, &vars);
-	mlx_loop(vars.mlx);
-	return 0;
+	mlx_key_hook(vars->win, key_hook, vars);
+	mlx_loop(vars->mlx);
+	return (0);
 }
