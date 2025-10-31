@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/28 18:39:58 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/10/31 16:48:05 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,53 +39,89 @@ int check_matr(char **str)
     return (0);
 }
 
+int check_lines(char **map)
+{
+    int i;
+
+    int j;
+
+    i = 0;
+    while (map[i])
+    {
+        j = 0;
+        skip_spaces(map[i], &j);
+        if (map[i][j] == '\n' || map[i][j] == '\0')
+            return (i);
+        i++;
+    }
+    return (i);
+}
+
+void check_tex(char *line, int *cont, t_parsing *p)
+{
+    int i;
+    int j;
+    int k;
+    char *tex_names[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
+    
+    i = 0;
+    while (i < 6)
+    {
+        j = 0;
+        k = 0;
+        skip_spaces(line, &k);
+        while (tex_names[i][j] != '\0')
+        {
+            if (line[j + k] != tex_names[i][j])
+                break ;
+            j++;
+        }
+        if (tex_names[i][j] == '\0')
+        {
+            k += j;
+            skip_spaces(line, &k);
+            if (!p->textures[i])
+                cont[0]++;
+            p->textures[i] = ft_strdup(line + k);
+        }
+        i++;
+    }
+}
+
 int check_textures(t_parsing *p)
 {
     int i;
     int j;
+    int cont;
 
     i = 0;
+    cont = 0;
+    while (p->map[i] && cont < 6)
+    {
+        check_tex(p->map[i], &cont, p);
+        i++;
+    }
+    if (cont < 6)
+        return (printf("Error: Missing textures\n"), -1);
+    j = 0;
     while (p->map[i])
     {
         j = 0;
         skip_spaces(p->map[i], &j);
-        if (p->map[i][j] && p->map[i][j] == 'N' && p->map[i][j + 1] != 'O')
-        {
-            j += 2;
-            skip_spaces(p->map[i], &j);
-            p->textures[0] = ft_strdup(&p->map[i][j]);
-        }
-        else if (p->map[i][j] && p->map[i][j] == 'S' && p->map[i][j + 1] == 'O')
-        {
-            j += 2;
-            skip_spaces(p->map[i], &j);
-            p->textures[1] = ft_strdup(&p->map[i][j]);
-        }
-        else if (p->map[i][j] && p->map[i][j] == 'W' && p->map[i][j + 1] == 'E')
-        {
-            j += 2;
-            skip_spaces(p->map[i], &j);
-            p->textures[2] = ft_strdup(&p->map[i][j]);
-        }
-        else if (p->map[i][j] && p->map[i][j] == 'E' && p->map[i][j + 1] == 'A')
-        {
-            j += 2;
-            skip_spaces(p->map[i], &j);
-            p->textures[3] = ft_strdup(&p->map[i][j]);
-        }
-        else if (p->map[i][j] && p->map[i][j] == 'F')
-        {
-            j += 1;
-            skip_spaces(p->map[i], &j);
-            p->textures[4] = ft_strdup(&p->map[i][j]);
-        }
-        else if (p->map[i][j] && p->map[i][j] == 'C')
-        {
-            j += 1;
-            skip_spaces(p->map[i], &j);
-            p->textures[5] = ft_strdup(&p->map[i][j]);
-        }
+        if (p->map[i][j] != '\0' && p->map[i][j] != '\n')
+            break ;
         i++;
     }
+    p->map_h = check_lines(&p->map[i]);
+    dup_matrix(&p->map[i], p);
+    i = 0;
+    while (i < 6)
+    {
+        if (!p->textures[i])
+            return (-1);
+        printf("texture: %s\n", p->textures[i]);
+        i++;
+    }
+    p->textures[i] = NULL;
     return (0);
 }

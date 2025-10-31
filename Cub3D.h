@@ -47,6 +47,7 @@ int parsing_init(t_parsing *parsing);
 int line_count(char *map_file);
 int mat_free(char **matrix);
 int check_textures(t_parsing *p);
+int dup_matrix(char **map, t_parsing *p);
 
 
 // Ludo

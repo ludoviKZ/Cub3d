@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/28 18:44:02 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/10/31 16:21:55 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,11 +138,11 @@ int parsing(t_parsing *parsing, char *map_file)
         return (-1);
     fd = open(map_file, O_RDONLY);
     if (fd == -1)
-        return (perror("Error"), -1);
+        return (printf("Error"), -1);
     parsing->map = malloc(sizeof(char *) * (parsing->map_h + 1));
     if (!parsing->map)
     {
-        perror("Memory allocation failed");
+        printf("Memory allocation failed");
         close(fd);
         return (-1);
     }
@@ -152,9 +152,9 @@ int parsing(t_parsing *parsing, char *map_file)
         parsing->map[++i] = get_next_line(fd);
     parsing->map[i] = NULL;
     close(fd);
-    // if (check_textures(parsing) == -1)
-    //     return (perror("Error"), -1);
+    if (check_textures(parsing) == -1)
+        return (printf("Error"), -1);
     if (check_map(parsing, parsing->map) == -1)
-        return (perror("Error"), -1);
+        return (printf("Error"), -1);
     return (0);
 }
