@@ -1,4 +1,4 @@
-FILES = draw2D.c main.c player.c parsing.c utils.c
+FILES = draw2D.c main.c player.c parsing.c utils.c checks.c
 OBJ = $(FILES:.c=.o)
 NAME = Cub3D
 MLX_PATH = minilibx/

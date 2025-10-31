@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/10/31 16:48:50 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/10/31 16:52:04 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,23 @@
 
 int parsing_init(t_parsing *parsing)
 {
-    parsing->map = NULL;
-    parsing->map_h = 0;
-    parsing->pl_x = -1;
-    parsing->pl_y = -1;
-    parsing->pl_dir = '\0';
+	int i;
+
+	parsing->map = NULL;
+	parsing->map_h = 0;
+	parsing->pl_x = -1;
+	parsing->pl_y = -1;
+	parsing->pl_dir = '\0';
+	parsing->textures = malloc(sizeof(char *) * 7);
+	if (!parsing->textures)
+	{
+		printf("Error\n");
+		return (-1);
+	}
+	/* initialize texture pointers to NULL to avoid reading uninitialized memory */
+	i = 0;
+	while (i < 7)
+		parsing->textures[i++] = NULL;
     return (0);
 }
 
@@ -106,6 +118,7 @@ int	key_hook(int keycode, t_vars *vars)
 		mlx_destroy_window(vars->mlx, vars->win);
 		mlx_destroy_display(vars->mlx);
 		mat_free(vars->parsing->map);
+		mat_free(vars->parsing->textures);
 		free(vars->parsing);
 		free(vars);
 		exit(EXIT_SUCCESS);
@@ -121,7 +134,7 @@ int main(int argc, char **argv)
    	p = malloc(sizeof(t_parsing));
     if (!p)
     {
-        perror("Memory allocation failed");
+        printf("Memory allocation failed");
         return (1);
     }
     parsing_init(p);
