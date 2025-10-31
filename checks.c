@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/31 16:48:05 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/10/31 17:36:46 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,95 @@ void check_tex(char *line, int *cont, t_parsing *p)
     }
 }
 
+int syntax_check_rgb(char **textures)
+{
+    int i;
+    char **parts;
+    char *trimmed;
+    char *c;
+    int k;
+    int idx;
+    long n;
+
+    i = 4;
+    while (i < 6)
+    {
+        if (!textures[i])
+            return (-1);
+        trimmed = ft_strtrim(textures[i], " \t\n");
+        if (!trimmed)
+            return (-1);
+        parts = ft_split(trimmed, ',');
+        if (!parts)
+            return (free(trimmed), -1);
+        free(trimmed);
+        if (!parts[0] || !parts[1] || !parts[2] || parts[3])
+        {
+            mat_free(parts);
+            return (-1);
+        }
+        k = 0;
+        while (k < 3)
+        {
+            c = ft_strtrim(parts[k], " \t\n");
+            if (!c)
+            {
+                mat_free(parts);
+                return (-1);
+            }
+            idx = 0;
+            if (c[0] == '\0')
+                return (free(c), mat_free(parts), -1);
+            while (c[idx])
+            {
+                if (c[idx] < '0' || c[idx] > '9')
+                    return (free(c), mat_free(parts), -1);
+                idx++;
+            }
+            n = ft_atoi(c);
+            free(c);
+            if (n < 0 || n > 255)
+            {
+                mat_free(parts);
+                return (-1);
+            }
+            k++;
+        }
+        mat_free(parts);
+        i++;
+    }
+    return (0);
+}
+
+int syntax_check(char **textures)
+{
+    int i;
+    int fd;
+    char *trimmed;
+
+    i = 0;
+    while (i < 6)
+    {
+        if (!textures[i])
+            return (-1);
+        if (i < 4)
+        {
+            trimmed = ft_strtrim(textures[i], " \t\n");
+            if (!trimmed)
+                return (-1);
+            fd = open(trimmed, O_RDONLY);
+            if (fd == -1)
+                return (free(trimmed), -1);
+            close(fd);
+            free(trimmed);
+        }
+        i++;
+    }
+    if (syntax_check_rgb(textures) == -1)
+        return (-1);
+    return (0);
+}
+
 int check_textures(t_parsing *p)
 {
     int i;
@@ -119,6 +208,7 @@ int check_textures(t_parsing *p)
     {
         if (!p->textures[i])
             return (-1);
+        syntax_check(p->textures);
         printf("texture: %s\n", p->textures[i]);
         i++;
     }
