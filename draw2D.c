@@ -25,7 +25,7 @@ int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
 	int y;
 	int square_size;
 
-	square_size = 30; // Define the size of each square
+	square_size = CELL_SIZE; // Define the size of each square (use CELL_SIZE from header)
 	y = 0;
 	while (y < size[1])
 	{
@@ -61,7 +61,14 @@ void	redraw_scene(t_vars *vars)
 	size[0] = cols;
 	size[1] = rows;
 	printf("Redrawing scene with map size %d x %d\n", cols, rows);
-	draw_square2D(vars->map, size, vars->mlx, vars->win);
+	/* Instead of drawing the 2D map, clear the window and paint a simple
+	   ceiling (top half) and floor (bottom half) so the 3D projection can
+	   occupy the full window width. */
+	int mid = MAP_HEIGHT / 2;
+	for (int y = 0; y < mid; ++y)
+		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, CEILING_COLOR, 1);
+	for (int y = mid; y < MAP_HEIGHT; ++y)
+		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, FLOOR_COLOR, 1);
 }
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness)
 {

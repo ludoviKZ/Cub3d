@@ -14,6 +14,12 @@
 #define MAP_WIDTH 1024
 #define MAP_HEIGHT 512
 # define M_PI 3.14159265358979323846
+#define WALL_SCALE 4.0
+#define CEILING_COLOR 0x87CEEB 
+#define FLOOR_COLOR   0x444444 
+/* Size of one map cell in pixels. Reduce this to make the perceived map
+	translation (movement and map scaling) smaller. */
+#define CELL_SIZE 30
 
 typedef struct s_player
 {
@@ -38,6 +44,10 @@ typedef struct s_vars
 	int		fd;
 	t_parsing    *parsing;
 	t_player	*player;
+	/* Runtime adjustable parameters */
+	double  wall_scale; /* current wall scale (initialized from WALL_SCALE) */
+	int     move_step;  /* pixels moved per step */
+	int     cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
 }	t_vars;
 
 // Kris
@@ -55,8 +65,9 @@ void	move(t_vars *vars, int ver, int side);
 void	rotate(t_vars *vars, int angle);
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness);
 int validate_move(t_vars *vars, int ver, int side);
-void draw_field_of_view(t_vars *vars, int color);
+void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
+void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, int hit_x, int hit_y, double ray_angle);
 
 #endif
