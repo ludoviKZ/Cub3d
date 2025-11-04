@@ -3,16 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/10/31 16:52:04 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/11/04 16:26:12 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "minilibx/mlx.h"
 #include "Cub3D.h"
+
+static t_vars *g_vars = NULL;
+
+static void cleanup(void)
+{
+	if (!g_vars)
+		return ;
+	if (g_vars->parsing)
+	{
+		if (g_vars->parsing->map)
+			mat_free(g_vars->parsing->map);
+		if (g_vars->parsing->textures)
+			mat_free(g_vars->parsing->textures);
+		free(g_vars->parsing);
+	}
+	free(g_vars);
+	g_vars = NULL;
+}
 
 
 int parsing_init(t_parsing *parsing)
@@ -117,12 +135,18 @@ int	key_hook(int keycode, t_vars *vars)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);
 		mlx_destroy_display(vars->mlx);
-		mat_free(vars->parsing->map);
-		mat_free(vars->parsing->textures);
-		free(vars->parsing);
-		free(vars);
+		cleanup();
 		exit(EXIT_SUCCESS);
 	}
+	return (0);
+}
+
+int	close_window(t_vars *vars)
+{
+	mlx_destroy_window(vars->mlx, vars->win);
+	mlx_destroy_display(vars->mlx);
+	cleanup();
+	exit(EXIT_SUCCESS);
 	return (0);
 }
 
@@ -139,16 +163,29 @@ int main(int argc, char **argv)
     }
     parsing_init(p);
     vars = malloc(sizeof(t_vars));
+	if (!vars)
+	{
+		mat_free(p->textures);
+		free(p);
+		printf("Memory allocation failed");
+		return (1);
+	}
     vars->parsing = p;
+	g_vars = vars;
+	atexit(cleanup);
     if (argc != 2)
     {
         printf("Usage: %s <map_file>\n", argv[0]);
-        return (1);
+		mat_free(p->textures);
+		free(p);
+		return (1);
     }
     if (parsing(p, argv[1]) < 0)
     {
-        printf("Parsing failed\n");
-        return (1);
+		printf("Parsing failed\n");
+		mat_free(p->textures);
+		free(p);
+		return (1);
     }
 	vars->mlx = mlx_init();
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
@@ -156,8 +193,10 @@ int main(int argc, char **argv)
 	vars->map = p->map;
 	redraw_scene(vars);
 	init_player(vars);
-	mlx_key_hook(vars->win, key_hook, vars);
+	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
+	//mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
 	mlx_loop_hook(vars->mlx, key_hook, vars);
+	mlx_hook(vars->win, 17, 0, close_window, vars);    /* DestroyNotify */
 	mlx_loop(vars->mlx);
 	return (0);
 }
