@@ -6,11 +6,7 @@ int	init_player(t_vars *vars)
 	int	y;
 	int	x;
 
-	/* Initialize runtime cell size from the compile-time macro. This lets
-	   you change CELL_SIZE in the header and then rebuild to change the
-	   starting value; it can also be adjusted at runtime via keybindings. */
 	vars->cell_size = CELL_SIZE;
-
 	y = vars->parsing->pl_y * vars->cell_size;
 	x = vars->parsing->pl_x * vars->cell_size;
 	vars->player = (t_player *)malloc(sizeof(t_player));
@@ -19,10 +15,8 @@ int	init_player(t_vars *vars)
 	vars->player->x = x;
 	vars->player->y = y;
 	vars->player->dir = 0; // Initial direction
-	/* Initialize runtime parameters on vars so they can be adjusted at runtime */
 	vars->wall_scale = WALL_SCALE;
 	vars->move_step = 5;
-	/* Draw initial scene background (ceiling/floor) and 3D view */
 	redraw_scene(vars);
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
