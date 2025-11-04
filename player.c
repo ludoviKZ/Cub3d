@@ -251,11 +251,13 @@ void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, int hit_x, int hi
 	 /* Use a neutral gray for walls so a rendering bug doesn't produce a
 		 full-white screen; you can change this color later if desired. */
 	 int wall_color = 0x808080;
-	if (bottom >= top)
-		draw_line2D(vars->mlx, vars->win, ray, top, ray, bottom, wall_color, 1);
+	 (void)wall_color; // suppress unused variable warning for now
+	draw_texture(vars);
+	// if (bottom >= top)
+	// 	draw_line2D(vars->mlx, vars->win, ray, top, ray, bottom, wall_color, 1);
 
-	if (bottom < MAP_HEIGHT - 1)
-		draw_line2D(vars->mlx, vars->win, ray, bottom + 1, ray, MAP_HEIGHT - 1, FLOOR_COLOR, 1);
+	// if (bottom < MAP_HEIGHT - 1)
+	// 	draw_line2D(vars->mlx, vars->win, ray, bottom + 1, ray, MAP_HEIGHT - 1, FLOOR_COLOR, 1);
 	return;
 }
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2)

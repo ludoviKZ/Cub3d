@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/04 16:26:12 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/04 18:16:05 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,17 +172,20 @@ int main(int argc, char **argv)
 	}
     vars->parsing = p;
 	g_vars = vars;
-	atexit(cleanup);
     if (argc != 2)
     {
         printf("Usage: %s <map_file>\n", argv[0]);
 		mat_free(p->textures);
+		if (p->map)
+			mat_free(p->map);
 		free(p);
 		return (1);
     }
     if (parsing(p, argv[1]) < 0)
     {
 		printf("Parsing failed\n");
+		if (p->map)
+			mat_free(p->map);
 		mat_free(p->textures);
 		free(p);
 		return (1);

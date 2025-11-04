@@ -83,7 +83,6 @@ void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, i
 	   centered (approximately) on the line point. */
 	int start = -(thickness / 2);
 	int end = start + thickness - 1;
-
 	while (1)
 	{
 		/* Draw a small filled square centered at (x1,y1) of size thickness */

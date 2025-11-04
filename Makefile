@@ -1,4 +1,4 @@
-FILES = draw2D.c main.c player.c parsing.c utils.c checks.c
+FILES = draw2D.c main.c player.c parsing.c utils.c checks.c texture.c
 OBJ = $(FILES:.c=.o)
 NAME = Cub3D
 MLX_PATH = minilibx/
@@ -12,7 +12,7 @@ CC = cc
 RM = rm -f
 
 %.o : %.c
-	$(CC) $(CFLAGS) -Imlx -c -o $@ $<
+	@$(CC) $(CFLAGS) -Imlx -c -o $@ $<
 
 all: adittionallibs $(NAME)
 
@@ -21,7 +21,8 @@ adittionallibs:
 	@make -C $(LIBFT_PATH) all
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(MLX_FLAGS) $(OBJ) $(MLX_LIB) $(LIBFT_LIB) $(MATH_LIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(MLX_FLAGS) $(OBJ) $(MLX_LIB) $(LIBFT_LIB) $(MATH_LIBS) -o $(NAME)
+	@echo "Cub3D compiled successfully!"
 	
 clean:
 	make -C $(MLX_PATH) clean

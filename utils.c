@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/31 16:27:22 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/04 16:50:12 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int dup_map(t_parsing *p, char *map_file)
     return (0);
 }
 
-int dup_matrix(char **map, t_parsing *p)
+char **dup_matrix(char **map, t_parsing *p)
 {
     int i;
     char **new_map;
@@ -62,7 +62,7 @@ int dup_matrix(char **map, t_parsing *p)
         i++;
     new_map = malloc(sizeof(char *) * (i + 1));
     if (!new_map)
-        return (printf("Memory allocation failed"), -1);
+        return (printf("Memory allocation failed"), NULL);
     for (int k = 0; k < i; ++k)
     {
         new_map[k] = ft_strdup(map[k]);
@@ -73,12 +73,11 @@ int dup_matrix(char **map, t_parsing *p)
             while (t < k)
                 free(new_map[t++]);
             free(new_map);
-            return (printf("Memory allocation failed"), -1);
+            return (printf("Memory allocation failed"), NULL);
         }
     }
     new_map[i] = NULL;
     /* now free old matrix and replace it */
     mat_free(p->map);
-    p->map = new_map;
-    return (0);
+    return (new_map);
 }

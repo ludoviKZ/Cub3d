@@ -37,6 +37,16 @@ typedef struct s_parsing {
     char    pl_dir;
 }	t_parsing;
 
+typedef struct s_texture {
+	void	*img[4];
+	int		width;
+	int		height;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}	t_texture;
+
 typedef struct s_vars
 {
 	void	*mlx;
@@ -45,6 +55,7 @@ typedef struct s_vars
 	int		fd;
 	t_parsing    *parsing;
 	t_player	*player;
+	t_texture	*texture;
 	/* Runtime adjustable parameters */
 	double  wall_scale; /* current wall scale (initialized from WALL_SCALE) */
 	int     move_step;  /* pixels moved per step */
@@ -57,7 +68,8 @@ int parsing_init(t_parsing *parsing);
 int line_count(char *map_file);
 int mat_free(char **matrix);
 int check_textures(t_parsing *p);
-int dup_matrix(char **map, t_parsing *p);
+char **dup_matrix(char **map, t_parsing *p);
+void draw_texture(t_vars *vars);
 
 
 // Ludo

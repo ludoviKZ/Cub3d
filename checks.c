@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/10/31 17:36:46 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/04 17:13:55 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void check_tex(char *line, int *cont, t_parsing *p)
                 break ;
             j++;
         }
-        if (tex_names[i][j] == '\0')
+        if (tex_names[i][j] == '\0' && line[j + k] == ' ')
         {
             k += j;
             skip_spaces(line, &k);
@@ -111,19 +111,13 @@ int syntax_check_rgb(char **textures)
             return (free(trimmed), -1);
         free(trimmed);
         if (!parts[0] || !parts[1] || !parts[2] || parts[3])
-        {
-            mat_free(parts);
-            return (-1);
-        }
+            return (mat_free(parts), -1);
         k = 0;
         while (k < 3)
         {
             c = ft_strtrim(parts[k], " \t\n");
             if (!c)
-            {
-                mat_free(parts);
-                return (-1);
-            }
+                return (mat_free(parts), -1);
             idx = 0;
             if (c[0] == '\0')
                 return (free(c), mat_free(parts), -1);
@@ -165,8 +159,8 @@ int syntax_check(char **textures)
             if (!trimmed)
                 return (-1);
             fd = open(trimmed, O_RDONLY);
-            if (fd == -1)
-                return (free(trimmed), -1);
+            // if (fd == -1)
+            //     return (free(trimmed), -1);
             close(fd);
             free(trimmed);
         }
@@ -202,13 +196,14 @@ int check_textures(t_parsing *p)
         i++;
     }
     p->map_h = check_lines(&p->map[i]);
-    dup_matrix(&p->map[i], p);
+    p->map = dup_matrix(&p->map[i], p);
     i = 0;
     while (i < 6)
     {
         if (!p->textures[i])
             return (-1);
-        syntax_check(p->textures);
+        if (syntax_check(p->textures) == -1)
+            return (-1);
         printf("texture: %s\n", p->textures[i]);
         i++;
     }
