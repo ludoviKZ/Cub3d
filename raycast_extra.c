@@ -3,7 +3,7 @@
 static void setup_dda_extra(t_vars *vars, t_raycast *r);
 static void setup_dda_extra_extra(t_raycast *r);
 
-/* Setup DDA and perform stepping until a wall is hit or the ray leaves
+/* Setup DDA and perform steppgiting until a wall is hit or the ray leaves
    the map. Variables declared first, assigned after. */
 void	setup_dda(t_vars *vars, t_raycast *r)
 {
@@ -68,13 +68,14 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 	r->perpWallDist = perpWallDist;
 	wallDistPixels = perpWallDist * (double)vars->cell_size;
 	r->wallDistPixels = wallDistPixels;
-
-	hit_px = r->px + (int)(r->rayDirX * wallDistPixels);
-	hit_py = r->py + (int)(r->rayDirY * wallDistPixels);
+	 hit_px = r->px + (int)round(r->rayDirX * wallDistPixels);
+	 hit_py = r->py + (int)round(r->rayDirY * wallDistPixels);
 	r->hit_px = hit_px;
 	r->hit_py = hit_py;
 
-	draw_3D_wall_slice(vars, r->ray_index, r->px, r->py, r->hit_px, r->hit_py, r->ray_angle);
+	/* Pass perpendicular distance (in map cells) to drawing code so it can
+	   compute slice height without recomputing or using integer hit points. */
+	draw_3D_wall_slice(vars, r->ray_index, r->px, r->py, r->perpWallDist, r->ray_angle);
 }
 
 static void setup_dda_extra(t_vars *vars, t_raycast *r)
