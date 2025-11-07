@@ -106,6 +106,7 @@ int mat_free(char **matrix);
 int check_textures(t_parsing *p);
 char **dup_matrix(char **map, t_parsing *p);
 void draw_texture(t_vars *vars);
+int rgb_to_color(char **rgb);
 
 
 // Ludo

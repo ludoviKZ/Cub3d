@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/07 16:52:31 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/07 18:43:40 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,7 @@ int main(int argc, char **argv)
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
 	printf("Map loaded successfully. Initializing player...\n");
 	vars->map = p->map;
+	vars->parsing = p;
 	redraw_scene(vars);
 	init_player(vars);
 	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */

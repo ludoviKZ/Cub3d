@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/04 16:50:12 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/07 18:47:27 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,20 @@ char **dup_matrix(char **map, t_parsing *p)
     /* now free old matrix and replace it */
     mat_free(p->map);
     return (new_map);
+}
+
+int rgb_to_color(char **rgb)
+{
+    int r;
+    int g;
+    int b;
+
+    if (!rgb || !rgb[0] || !rgb[1] || !rgb[2])
+        return (-1);
+    r = ft_atoi(rgb[0]);
+    g = ft_atoi(rgb[1]);
+    b = ft_atoi(rgb[2]);
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+        return (-1);
+    return ((r << 16) | (g << 8) | b);
 }

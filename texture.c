@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/04 18:49:19 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/07 17:03:14 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,10 @@ void my_mlx_pixel_put(t_texture *tex, int x, int y, int color)
 
 void draw_skewed_image(void *mlx, void *win, t_texture *src, float perspective)
 {
-    /* Simple trapezoid perspective: top of the image is narrower (farther) and
-       bottom is full width (near). 'perspective' is the top width scale in
-       [0.0,1.0] (e.g. 0.25 => top is 25% of full width). This is a fast,
-       scanline-based inverse mapping (dest->src) that produces a convincing
-       perspective effect without a full homography. */
+    /* Axis-swapped perspective: same trapezoid idea but applied across X.
+       As x increases the vertical span shrinks (columns become 'farther').
+       'perspective' is the fraction of full height at the left side (0..1).
+    */
     if (!src || !src->addr)
         return;
     int dst_w = src->width;
@@ -66,31 +65,36 @@ void draw_skewed_image(void *mlx, void *win, t_texture *src, float perspective)
         return;
     dst.addr = mlx_get_data_addr(dst.img[0], &dst.bits_per_pixel, &dst.line_length, &dst.endian);
 
-    float top_scale = perspective; /* fraction of width at the very top */
-    if (top_scale < 0.01f) top_scale = 0.01f;
-    if (top_scale > 1.0f) top_scale = 1.0f;
+     /* perspective is the fraction of full height at the RIGHT side (0..1).
+         Values <1.0 make the image shrink as x increases (toward the right). */
+     float right_scale = perspective;
+     if (right_scale < 0.01f) right_scale = 0.01f;
+     if (right_scale > 1.0f) right_scale = 1.0f;
 
-    float dst_cx = (dst_w - 1) * 0.5f;
+    float dst_cy = (dst_h - 1) * 0.5f;
 
-    for (int y = 0; y < dst_h; ++y) {
-        float t = (dst_h > 1) ? ((float)y / (dst_h - 1)) : 0.0f;
-        /* current horizontal scale: interpolates from top_scale -> 1.0 */
-        float cur_scale = top_scale + (1.0f - top_scale) * t;
-        float cur_w = src->width * cur_scale;
-        float left = dst_cx - (cur_w * 0.5f);
+    /* For each destination column, compute allowed vertical span and map into source */
+    for (int x = 0; x < dst_w; ++x) {
+        float tx = (dst_w > 1) ? ((float)x / (dst_w - 1)) : 0.0f;
+    /* current scale: 1.0 at left -> right_scale at right (shrinks as x increases) */
+    float cur_scale = 1.0f - (1.0f - right_scale) * tx;
+        float cur_h = (float)src->height * cur_scale;
+        float top = dst_cy - (cur_h * 0.5f);
+        float bottom = top + cur_h;
 
-        for (int x = 0; x < dst_w; ++x) {
-            /* only map pixels that fall inside the trapezoid for this scanline */
-            if ((float)x < left || (float)x >= left + cur_w)
+        /* map column x to a source x (linear across width) */
+        float src_xf = tx * (float)(src->width - 1);
+        int src_x = (int)(src_xf + 0.5f);
+        if (src_x < 0) src_x = 0;
+        if (src_x >= src->width) src_x = src->width - 1;
+
+        for (int y = 0; y < dst_h; ++y) {
+            if ((float)y < top || (float)y >= bottom)
                 continue;
-            /* inverse-map destination x into source x (horizontal distortion only) */
-            float src_xf = ((float)(x - left) / cur_w) * (float)(src->width - 1);
-            /* map y linearly (no vertical stretch) */
-            float src_yf = t * (float)(src->height - 1);
-            int src_x = (int)(src_xf + 0.5f);
+            /* inverse-map vertical position within this column to source y */
+            float local_y = (float)(y - top);
+            float src_yf = (local_y / cur_h) * (float)(src->height - 1);
             int src_y = (int)(src_yf + 0.5f);
-            if (src_x < 0) src_x = 0;
-            if (src_x >= src->width) src_x = src->width - 1;
             if (src_y < 0) src_y = 0;
             if (src_y >= src->height) src_y = src->height - 1;
             int color = get_pixel(src, src_x, src_y);
@@ -99,52 +103,6 @@ void draw_skewed_image(void *mlx, void *win, t_texture *src, float perspective)
     }
 
     mlx_put_image_to_window(mlx, win, dst.img[0], 64, 64);
-    mlx_destroy_image(mlx, dst.img[0]);
-}
-
-// dst_w, dst_h chosen as desired (e.g., window area)
-void draw_perspective_image(void *mlx, void *win, t_texture *src,
-                            int dst_x, int dst_y,
-                            int dst_w, int dst_h,
-                            float top_scale, float bottom_scale)
-{
-    if (!src || !src->addr) return;
-    t_texture dst;
-    dst.width  = dst_w;
-    dst.height = dst_h;
-    dst.img[0] = mlx_new_image(mlx, dst.width, dst.height);
-    if (!dst.img[0]) return;
-    dst.addr = mlx_get_data_addr(dst.img[0], &dst.bits_per_pixel, &dst.line_length, &dst.endian);
-
-    float src_cx = (src->width - 1) * 0.5f;
-    // float src_cy = (src->height - 1) * 0.5f;
-    float dst_cx = (dst.width - 1) * 0.5f;
-    // float dst_cy = (dst.height - 1) * 0.5f;
-
-    for (int y = 0; y < dst.height; ++y)
-    {
-        float t = (dst.height > 1) ? ((float)y / (dst.height - 1)) : 0.0f;
-        float scale = top_scale + (bottom_scale - top_scale) * t;
-        float inv_scale = 1.0f / scale;
-
-        // map vertical coordinate linearly (you can tweak this)
-        float src_yf = (float)y * (float)src->height / (float)dst.height;
-        int src_y = (int)(src_yf + 0.5f);
-        if (src_y < 0) src_y = 0;
-        if (src_y >= src->height) src_y = src->height - 1;
-
-        for (int x = 0; x < dst.width; ++x)
-        {
-            // inverse map x:
-            float src_xf = src_cx + ( (x - dst_cx) * inv_scale );
-            int src_x = (int)(src_xf + 0.5f);
-            if (src_x < 0 || src_x >= src->width) continue; // skip outside
-            int color = get_pixel(src, src_x, src_y);
-            my_mlx_pixel_put(&dst, x, y, color);
-        }
-    }
-
-    mlx_put_image_to_window(mlx, win, dst.img[0], dst_x, dst_y);
     mlx_destroy_image(mlx, dst.img[0]);
 }
 

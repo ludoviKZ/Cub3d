@@ -65,10 +65,11 @@ void	redraw_scene(t_vars *vars)
 	   ceiling (top half) and floor (bottom half) so the 3D projection can
 	   occupy the full window width. */
 	int mid = MAP_HEIGHT / 2;
+	/* parsing->colors[0] = floor, parsing->colors[1] = ceiling */
 	for (int y = 0; y < mid; ++y)
-		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, CEILING_COLOR, 1);
+		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, ft_atoi(vars->parsing->textures[5]), 1);
 	for (int y = mid; y < MAP_HEIGHT; ++y)
-		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, FLOOR_COLOR, 1);
+		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, ft_atoi(vars->parsing->textures[4]), 1);
 }
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness)
 {
