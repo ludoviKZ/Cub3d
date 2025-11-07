@@ -62,6 +62,42 @@ typedef struct s_vars
 	int     cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
 }	t_vars;
 
+/* Raycasting helper structure: groups temporary variables used while
+   casting a single frame. This keeps draw functions' locals in one place
+   so the code can be split across files easily. */
+typedef struct s_raycast
+{
+	int     fov_angle;
+	int     num_rays;
+	int     max_length;
+	double  start_angle;
+	double  angle_step;
+	int     px;
+	int     py;
+	int     ray_index;
+	double  ray_angle;
+	double  rad;
+	double  rayDirX;
+	double  rayDirY;
+	double  posX;
+	double  posY;
+	int     mapX;
+	int     mapY;
+	double  deltaDistX;
+	double  deltaDistY;
+	double  sideDistX;
+	double  sideDistY;
+	int     stepX;
+	int     stepY;
+	int     hit;
+	int     side;
+	double  perpWallDist;
+	double  wallDistPixels;
+	int     hit_px;
+	int     hit_py;
+	int     map_rows;
+}   t_raycast;
+
 // Kris
 int parsing(t_parsing *parsing, char *map_file);
 int parsing_init(t_parsing *parsing);
@@ -84,5 +120,11 @@ void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
 void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, int hit_x, int hit_y, double ray_angle);
+
+/* Raycast helper functions (refactor targets) */
+void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);
+void    setup_dda(t_vars *vars, t_raycast *r);
+void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
+double  compute_delta_dist(double rayDir);
 
 #endif
