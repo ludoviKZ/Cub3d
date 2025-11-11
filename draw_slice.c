@@ -18,7 +18,7 @@ int slice_height_calc(t_vars *vars, double perpWallDist)
 		corrected_dist_pixels = 1.0;
 	return (int)((MAP_HEIGHT * vars->wall_scale) / corrected_dist_pixels);
 }
-void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle)
+void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index)
 {
 	int slice_height;
 	int top;
@@ -40,12 +40,12 @@ void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDi
 	if (bottom >= MAP_HEIGHT)
 		bottom = MAP_HEIGHT - 1;
 	if (top > 0)
-		draw_line2D(vars->mlx, vars->win, ray, 0, ray, top - 1, CEILING_COLOR, 1);
+		draw_line2D(vars->mlx, vars->win, ray, 0, ray, top - 1, vars->parsing->colors[1], 1);
 	wall_color = 0x808080;
 	if (bottom >= top)
-		draw_line2D(vars->mlx, vars->win, ray, top, ray, bottom, wall_color, 1);
+		draw_texture(vars->mlx, vars->win, vars, ray, slice_height, wallX, tex_index);
 
 	if (bottom < MAP_HEIGHT - 1)
-		draw_line2D(vars->mlx, vars->win, ray, bottom + 1, ray, MAP_HEIGHT - 1, FLOOR_COLOR, 1);
+		draw_line2D(vars->mlx, vars->win, ray, bottom + 1, ray, MAP_HEIGHT - 1, vars->parsing->colors[0], 1);
 	return;
 }

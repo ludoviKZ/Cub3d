@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/04 16:57:41 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/11 17:18:48 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,12 @@ int line_count(char *map_file)
     fd = open(map_file, O_RDONLY);
     if (fd == -1)
         return (-1);
-    while (get_next_line(fd))
+    char *line;
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        free(line);
         count++;
+    }
     close(fd);
     return (count);
 }

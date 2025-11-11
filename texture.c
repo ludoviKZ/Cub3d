@@ -6,20 +6,27 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/07 17:03:14 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/11 18:00:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-int load_texture(t_vars *vars, t_texture *texture)
+int load_texture(t_vars *vars, t_texture *texture, int tex_index)
 {
     int tex_w;
     int tex_h;
 
     tex_w = 64;
     tex_h = 64;
-    texture->img[0] = mlx_xpm_file_to_image(vars->mlx, "textures/north.xpm", &tex_w, &tex_h);
+    if (!vars || !vars->parsing || !vars->parsing->textures)
+        return (-1);
+    if (tex_index < 0)
+        return (-1);
+    char *path = vars->parsing->textures[tex_index];
+    if (!path)
+        return (-1);
+    texture->img[0] = mlx_xpm_file_to_image(vars->mlx, path, &tex_w, &tex_h);
     if (!texture->img[0])
         return (-1);
     texture->width = tex_w;
@@ -27,7 +34,10 @@ int load_texture(t_vars *vars, t_texture *texture)
     texture->addr = mlx_get_data_addr(texture->img[0], &texture->bits_per_pixel,
                                       &texture->line_length, &texture->endian);
     if (!texture->addr)
+    {
+        mlx_destroy_image(vars->mlx, texture->img[0]);
         return (-1);
+    }
     return (0);
 }
 
@@ -39,82 +49,57 @@ int get_pixel(t_texture *tex, int x, int y)
     return (*(int *)pixel);
 }
 
-void my_mlx_pixel_put(t_texture *tex, int x, int y, int color)
+void draw_wall(void *mlx, void *win, t_texture *texture, int screen_x, int slice_height, double wallX)
 {
-    if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height)
+    if (!texture || !texture->addr)
         return;
-    char *dst = tex->addr + (y * tex->line_length + x * (tex->bits_per_pixel / 8));
-    *(int *)dst = color;
-}
+    int tex_w = texture->width;
+    int tex_h = texture->height;
 
-void draw_skewed_image(void *mlx, void *win, t_texture *src, float perspective)
-{
-    /* Axis-swapped perspective: same trapezoid idea but applied across X.
-       As x increases the vertical span shrinks (columns become 'farther').
-       'perspective' is the fraction of full height at the left side (0..1).
-    */
-    if (!src || !src->addr)
-        return;
-    int dst_w = src->width;
-    int dst_h = src->height;
-    t_texture dst;
-    dst.width = dst_w;
-    dst.height = dst_h;
-    dst.img[0] = mlx_new_image(mlx, dst.width, dst.height);
-    if (!dst.img[0])
-        return;
-    dst.addr = mlx_get_data_addr(dst.img[0], &dst.bits_per_pixel, &dst.line_length, &dst.endian);
+    int top = (MAP_HEIGHT / 2) - (slice_height / 2);
+    int bottom = top + slice_height - 1;
+    if (top < 0) top = 0;
+    if (bottom >= MAP_HEIGHT) bottom = MAP_HEIGHT - 1;
 
-     /* perspective is the fraction of full height at the RIGHT side (0..1).
-         Values <1.0 make the image shrink as x increases (toward the right). */
-     float right_scale = perspective;
-     if (right_scale < 0.01f) right_scale = 0.01f;
-     if (right_scale > 1.0f) right_scale = 1.0f;
+    int wall_h = bottom - top + 1;
+    for (int y = top; y <= bottom; ++y) {
+        float tex_yf;
+        if (wall_h > 1)
+            tex_yf = ((float)(y - top) / (float)(wall_h - 1)) * (float)(tex_h - 1);
+        else
+            tex_yf = 0.0f;
+        int tex_y = (int)(tex_yf + 0.5f);
+        if (tex_y < 0) tex_y = 0;
+        if (tex_y >= tex_h) tex_y = tex_h - 1;
 
-    float dst_cy = (dst_h - 1) * 0.5f;
-
-    /* For each destination column, compute allowed vertical span and map into source */
-    for (int x = 0; x < dst_w; ++x) {
-        float tx = (dst_w > 1) ? ((float)x / (dst_w - 1)) : 0.0f;
-    /* current scale: 1.0 at left -> right_scale at right (shrinks as x increases) */
-    float cur_scale = 1.0f - (1.0f - right_scale) * tx;
-        float cur_h = (float)src->height * cur_scale;
-        float top = dst_cy - (cur_h * 0.5f);
-        float bottom = top + cur_h;
-
-        /* map column x to a source x (linear across width) */
-        float src_xf = tx * (float)(src->width - 1);
-        int src_x = (int)(src_xf + 0.5f);
-        if (src_x < 0) src_x = 0;
-        if (src_x >= src->width) src_x = src->width - 1;
-
-        for (int y = 0; y < dst_h; ++y) {
-            if ((float)y < top || (float)y >= bottom)
-                continue;
-            /* inverse-map vertical position within this column to source y */
-            float local_y = (float)(y - top);
-            float src_yf = (local_y / cur_h) * (float)(src->height - 1);
-            int src_y = (int)(src_yf + 0.5f);
-            if (src_y < 0) src_y = 0;
-            if (src_y >= src->height) src_y = src->height - 1;
-            int color = get_pixel(src, src_x, src_y);
-            my_mlx_pixel_put(&dst, x, y, color);
-        }
+        /* Compute horizontal texture coordinate from wallX fractional position */
+        int tex_x = (int)(wallX * (double)tex_w);
+        if (tex_x < 0) tex_x = 0;
+        if (tex_x >= tex_w) tex_x = tex_w - 1;
+        int color = get_pixel(texture, tex_x, tex_y);
+        mlx_pixel_put(mlx, win, screen_x, y, color);
     }
-
-    mlx_put_image_to_window(mlx, win, dst.img[0], 64, 64);
-    mlx_destroy_image(mlx, dst.img[0]);
 }
 
-void draw_texture(t_vars *vars)
+void draw_texture(void *mlx, void *win, t_vars *vars, int ray, int slice_height, double wallX, int tex_index)
 {
     t_texture *texture;
+	(void)mlx;
+	(void)win;
 
     texture = malloc(sizeof(t_texture));
     if (!texture)
         return;
-    load_texture(vars, texture);
-    // mlx_put_image_to_window(vars->mlx, vars->win, texture->img[0], 0, 0);
-    draw_skewed_image(vars->mlx, vars->win, texture, 0.5f);
-    vars->texture = texture;
+    if (load_texture(vars, texture, tex_index) != 0)
+    {
+        free(texture);
+        return;
+    }
+
+    draw_wall(vars->mlx, vars->win, texture, ray, slice_height, wallX);
+
+    /* Destroy the image we created for this slice to avoid leaking X11 resources */
+    if (texture->img[0])
+        mlx_destroy_image(vars->mlx, texture->img[0]);
+    free(texture);
 }

@@ -14,12 +14,12 @@
 #define MAP_WIDTH 1024
 #define MAP_HEIGHT 512
 # define M_PI 3.14159265358979323846
-#define WALL_SCALE 4.0
+#define WALL_SCALE 100
 #define CEILING_COLOR 0x87CEEB 
 #define FLOOR_COLOR   0x444444 
 /* Size of one map cell in pixels. Reduce this to make the perceived map
 	translation (movement and map scaling) smaller. */
-#define CELL_SIZE 60
+#define CELL_SIZE 90
 
 typedef struct s_player
 {
@@ -35,6 +35,7 @@ typedef struct s_parsing {
     int     pl_x;
     int     pl_y;
     char    pl_dir;
+    int     *colors;
 }	t_parsing;
 
 typedef struct s_texture {
@@ -116,8 +117,10 @@ int line_count(char *map_file);
 int mat_free(char **matrix);
 int check_textures(t_parsing *p);
 char **dup_matrix(char **map, t_parsing *p);
-void draw_texture(t_vars *vars);
+void draw_texture(void *mlx, void *win, t_vars *vars, int ray, int slice_height, double wallX, int tex_index);
 int rgb_to_color(char **rgb);
+int load_texture(t_vars *vars, t_texture *texture, int tex_index);
+//void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
 
 // Ludo
@@ -131,7 +134,7 @@ int validate_move(t_vars *vars, int ver, int side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
-void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle);
+void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index);
 void line2D_vars_init(t_line2D *line, int x1, int y1, int x2, int y2, int thickness);
 
 /* Raycast helper functions (refactor targets) */
