@@ -19,7 +19,7 @@
 #define FLOOR_COLOR   0x444444 
 /* Size of one map cell in pixels. Reduce this to make the perceived map
 	translation (movement and map scaling) smaller. */
-#define CELL_SIZE 30
+#define CELL_SIZE 60
 
 typedef struct s_player
 {
@@ -46,6 +46,17 @@ typedef struct s_texture {
 	int		line_length;
 	int		endian;
 }	t_texture;
+
+typedef struct s_line2D
+{
+	int dx;
+	int dy;
+	int sx;
+	int sy;
+	int err;
+	int start;
+	int end;
+}	t_line2D;
 
 typedef struct s_vars
 {
@@ -120,12 +131,14 @@ int validate_move(t_vars *vars, int ver, int side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
-void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, int hit_x, int hit_y, double ray_angle);
+void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle);
+void line2D_vars_init(t_line2D *line, int x1, int y1, int x2, int y2, int thickness);
 
 /* Raycast helper functions (refactor targets) */
 void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);
 void    setup_dda(t_vars *vars, t_raycast *r);
 void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
 double  compute_delta_dist(double rayDir);
+int	 slice_height_calc(t_vars *vars, double perpWallDist);
 
 #endif
