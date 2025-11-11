@@ -1,5 +1,36 @@
 #include "Cub3D.h"
 
+/* Setup DDA and perform steppgiting until a wall is hit or the ray leaves
+   the map. Variables declared first, assigned after. */
+void	setup_dda(t_vars *vars, t_raycast *r)
+{
+	r->posX = (double)r->px / (double)vars->cell_size;
+	r->posY = (double)r->py / (double)vars->cell_size;
+	r->mapX = (int)r->posX;
+	r->mapY = (int)r->posY;
+	r->deltaDistX = compute_delta_dist(r->rayDirX);
+	r->deltaDistY = compute_delta_dist(r->rayDirY);
+	if (r->rayDirX < 0)
+		r->stepX = -1;
+	if (r->rayDirX < 0)
+		r->sideDistX = (r->posX - r->mapX) * r->deltaDistX;
+	else
+	{
+		r->stepX = 1;
+		r->sideDistX = (r->mapX + 1.0 - r->posX) * r->deltaDistX;
+	}
+	if (r->rayDirY < 0)
+		r->stepY = -1;
+	if (r->rayDirY < 0)
+		r->sideDistY = (r->posY - r->mapY) * r->deltaDistY;
+	else
+	{
+		r->stepY = 1;
+		r->sideDistY = (r->mapY + 1.0 - r->posY) * r->deltaDistY;
+	}
+	setup_dda_extra(vars, r);
+}
+
 /* Compute ray direction for a given ray index. Variables are declared at the
    top and assigned on separate lines to meet the requested style. */
 void compute_ray_direction(t_vars *vars, t_raycast *r, int index)
@@ -26,8 +57,8 @@ void draw_field_of_view(t_vars *vars)
     r.max_length = 400;
     r.start_angle = (double)vars->player->dir - ((double)r.fov_angle / 2.0);
     r.angle_step = (double)r.fov_angle / (double)r.num_rays;
-    r.px = vars->player->x + 2;
-    r.py = vars->player->y + 2;
+    r.px = (int)(vars->player->x + 2.0);
+    r.py = (int)(vars->player->y + 2.0);
     r.map_rows = 0;
     while (vars->map[r.map_rows])
         r.map_rows++;

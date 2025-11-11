@@ -23,8 +23,8 @@
 
 typedef struct s_player
 {
-	int	x;
-	int	y;
+	double  x;
+	double  y;
 	int	dir;
 }	t_player;
 
@@ -127,7 +127,7 @@ int		init_player(t_vars *vars);
 void	move(t_vars *vars, int ver, int side);
 void	rotate(t_vars *vars, int angle);
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness);
-int validate_move(t_vars *vars, int ver, int side);
+int validate_move(t_vars *vars, double ver, double side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
@@ -137,6 +137,7 @@ void line2D_vars_init(t_line2D *line, int x1, int y1, int x2, int y2, int thickn
 /* Raycast helper functions (refactor targets) */
 void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);
 void    setup_dda(t_vars *vars, t_raycast *r);
+void    setup_dda_extra(t_vars *vars, t_raycast *r);
 void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
 double  compute_delta_dist(double rayDir);
 int	 slice_height_calc(t_vars *vars, double perpWallDist);

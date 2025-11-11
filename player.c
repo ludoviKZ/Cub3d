@@ -25,14 +25,20 @@ void	move(t_vars *vars, int ver, int side)
 {
 	if (!vars->player)
 		return;
-	/* Erase previous drawing by redrawing the scene background (clears to ceiling/floor) */
 	redraw_scene(vars);
-	if (validate_move(vars, ver, side) == 0)
+	double rad = (vars->player->dir * M_PI) / 180.0;
+	double dx_f = -cos(rad) * (double)ver;
+	double dy_f = -sin(rad) * (double)ver;
+	double dx_s = -sin(rad) * (double)side;
+	double dy_s =  cos(rad) * (double)side;
+	double delta_x = dx_f + dx_s;
+	double delta_y = dy_f + dy_s;
+
+	if (validate_move(vars, delta_y, delta_x) == 0)
 	{
-		vars->player->y += ver;
-		vars->player->x += side;
+		vars->player->y += delta_y;
+		vars->player->x += delta_x;
 	}
-	/* Re-render 3D view after movement */
 	draw_field_of_view(vars);
 }
 void rotate(t_vars *vars, int angle)
@@ -49,10 +55,10 @@ void rotate(t_vars *vars, int angle)
 	draw_field_of_view(vars);
 	printf("Player direction: %d degrees\n", vars->player->dir);
 }
-int validate_move(t_vars *vars, int ver, int side)
+int validate_move(t_vars *vars, double ver, double side)
 {
-	int new_x;
-	int new_y;
+	double new_x;
+	double new_y;
 
 	if (!vars || !vars->player)
 		return (-1);
@@ -67,14 +73,20 @@ int validate_move(t_vars *vars, int ver, int side)
 	int rows = 0;
 	while (vars->map[rows])
 		rows++;
-	if (new_y / vars->cell_size < 0 || new_y / vars->cell_size >= rows)
+	int cell_row = (int)(new_y / vars->cell_size);
+	if (cell_row < 0 || cell_row >= rows)
 		return (-1);
-	int cols = ft_strlen(vars->map[new_y / vars->cell_size]);
-	if (new_x / vars->cell_size < 0 || new_x / vars->cell_size >= cols)
+	int cols = ft_strlen(vars->map[cell_row]);
+	int cell_col = (int)(new_x / vars->cell_size);
+	if (cell_col < 0 || cell_col >= cols)
 		return (-1);
-	if (vars->map[new_y / vars->cell_size][new_x / vars->cell_size] == '1')
+	if (vars->map[cell_row][cell_col] == '1')
 		return (-1);
-	if (vars->map[(new_y + 3) / vars->cell_size][(new_x + 3) / vars->cell_size] == '1')
+	int cell_row2 = (int)((new_y + 3) / vars->cell_size);
+	int cell_col2 = (int)((new_x + 3) / vars->cell_size);
+	if (cell_row2 < 0 || cell_row2 >= rows || cell_col2 < 0 || cell_col2 >= cols)
+		return (-1);
+	if (vars->map[cell_row2][cell_col2] == '1')
 		return (-1);
 	return (0);
 }

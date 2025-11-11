@@ -1,39 +1,8 @@
 #include "Cub3D.h"
 
-static void setup_dda_extra(t_vars *vars, t_raycast *r);
+void setup_dda_extra(t_vars *vars, t_raycast *r);
 static void setup_dda_extra_extra(t_raycast *r);
-
-/* Setup DDA and perform steppgiting until a wall is hit or the ray leaves
-   the map. Variables declared first, assigned after. */
-void	setup_dda(t_vars *vars, t_raycast *r)
-{
-	r->posX = (double)r->px / (double)vars->cell_size;
-	r->posY = (double)r->py / (double)vars->cell_size;
-	r->mapX = (int)r->posX;
-	r->mapY = (int)r->posY;
-	r->deltaDistX = compute_delta_dist(r->rayDirX);
-	r->deltaDistY = compute_delta_dist(r->rayDirY);
-	if (r->rayDirX < 0)
-		r->stepX = -1;
-	if (r->rayDirX < 0)
-		r->sideDistX = (r->posX - r->mapX) * r->deltaDistX;
-	else
-	{
-		r->stepX = 1;
-		r->sideDistX = (r->mapX + 1.0 - r->posX) * r->deltaDistX;
-	}
-	if (r->rayDirY < 0)
-		r->stepY = -1;
-	if (r->rayDirY < 0)
-		r->sideDistY = (r->posY - r->mapY) * r->deltaDistY;
-	else
-	{
-		r->stepY = 1;
-		r->sideDistY = (r->mapY + 1.0 - r->posY) * r->deltaDistY;
-	}
-	setup_dda_extra(vars, r);
-}
-
+static double safe_denominator(double v);
 /* Compute absolute delta distance for a ray direction axis without using
    the conditional operator. Variables declared first then assigned. */
 double compute_delta_dist(double rayDir)
@@ -45,6 +14,16 @@ double compute_delta_dist(double rayDir)
 	else
 		res = fabs(1.0 / rayDir);
 	return (res);
+}
+
+/* Return a non-zero denominator for division. If v is 0, return a
+   small epsilon to avoid division by zero. Uses an if-statement to
+   comply with the subject restriction against the conditional operator. */
+static double safe_denominator(double v)
+{
+	if (v == 0.0)
+		return 1e-6;
+	return v;
 }
 
 /* Compute perpendicular distance and hit pixel coordinates, then render
@@ -59,9 +38,9 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 	if (r->hit)
 	{
 		if (r->side == 0)
-			perpWallDist = (r->mapX - r->posX + (1 - r->stepX) / 2.0) / (r->rayDirX == 0 ? 1e-6 : r->rayDirX);
+			perpWallDist = (r->mapX - r->posX + (1 - r->stepX) / 2.0) / safe_denominator(r->rayDirX);
 		else
-			perpWallDist = (r->mapY - r->posY + (1 - r->stepY) / 2.0) / (r->rayDirY == 0 ? 1e-6 : r->rayDirY);
+			perpWallDist = (r->mapY - r->posY + (1 - r->stepY) / 2.0) / safe_denominator(r->rayDirY);
 	}
 	else
 		perpWallDist = (double)r->max_length / (double)vars->cell_size;
@@ -78,7 +57,7 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 	draw_3D_wall_slice(vars, r->ray_index, r->px, r->py, r->perpWallDist, r->ray_angle);
 }
 
-static void setup_dda_extra(t_vars *vars, t_raycast *r)
+void setup_dda_extra(t_vars *vars, t_raycast *r)
 {
 	setup_dda_extra_extra(r);
 	while (!r->hit)
