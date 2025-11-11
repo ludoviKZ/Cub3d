@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/11 17:50:15 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/11 18:43:48 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,11 @@ int	key_hook(int keycode, t_vars *vars)
 		return (0);
 	/* Movement keys now use vars->move_step so movement is tied to CELL_SIZE */
 	if (keycode == 's' )
-		move(vars, vars->move_step, 0);
+		move(vars, -vars->move_step, 0);
 	else if (keycode == 'a' )
 		move(vars, 0, -vars->move_step);
 	else if (keycode == 'w' )
-		move(vars, -vars->move_step, 0);
+		move(vars, vars->move_step, 0);
 	else if (keycode == 'd' )
 		move(vars, 0, +vars->move_step);
 	else if (keycode == 'i' ) // Left arrow key

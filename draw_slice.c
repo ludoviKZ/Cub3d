@@ -29,10 +29,10 @@ void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDi
 	(void)ray_angle;
 
 	slice_height = slice_height_calc(vars, perpWallDist);
-	if (slice_height > MAP_HEIGHT)
-		slice_height = MAP_HEIGHT;
-	if (slice_height < 0)
-		slice_height = 0;
+	/* Keep the calculated slice_height even if it's larger than the screen.
+	   We'll only draw the visible rows — do not scale the wall to fit. */
+	if (slice_height < 1)
+		slice_height = 1;
 	top = (MAP_HEIGHT / 2) - (slice_height / 2);
 	bottom = top + slice_height - 1;
 	if (top < 0)

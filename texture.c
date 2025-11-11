@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/11 18:00:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/11 19:00:39 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,27 +58,52 @@ void draw_wall(void *mlx, void *win, t_texture *texture, int screen_x, int slice
 
     int top = (MAP_HEIGHT / 2) - (slice_height / 2);
     int bottom = top + slice_height - 1;
-    if (top < 0) top = 0;
-    if (bottom >= MAP_HEIGHT) bottom = MAP_HEIGHT - 1;
 
-    int wall_h = bottom - top + 1;
-    for (int y = top; y <= bottom; ++y) {
-        float tex_yf;
-        if (wall_h > 1)
-            tex_yf = ((float)(y - top) / (float)(wall_h - 1)) * (float)(tex_h - 1);
-        else
-            tex_yf = 0.0f;
-        int tex_y = (int)(tex_yf + 0.5f);
-        if (tex_y < 0) tex_y = 0;
-        if (tex_y >= tex_h) tex_y = tex_h - 1;
+    /* visible draw range (clip to screen) */
+    int draw_top = (top < 0) ? 0 : top;
+    int draw_bottom = (bottom >= MAP_HEIGHT) ? (MAP_HEIGHT - 1) : bottom;
 
-        /* Compute horizontal texture coordinate from wallX fractional position */
-        int tex_x = (int)(wallX * (double)tex_w);
-        if (tex_x < 0) tex_x = 0;
-        if (tex_x >= tex_w) tex_x = tex_w - 1;
-        int color = get_pixel(texture, tex_x, tex_y);
-        mlx_pixel_put(mlx, win, screen_x, y, color);
+    /* create a temporary 1px-wide image for this column */
+    void *col_img = mlx_new_image(mlx, 1, MAP_HEIGHT);
+    if (col_img)
+    {
+        int col_bpp = 0;
+        int col_line_len = 0;
+        int col_endian = 0;
+        char *col_addr = mlx_get_data_addr(col_img, &col_bpp, &col_line_len, &col_endian);
+
+        /* Use the full wall height (slice_height) when mapping texture coordinates
+           so the texture sampling keeps correct perspective. Only fill the
+           visible rows (draw_top..draw_bottom). */
+        int full_wall_h = slice_height;
+        for (int y = draw_top; y <= draw_bottom; ++y) {
+            float tex_yf;
+            if (full_wall_h > 1)
+                tex_yf = ((float)(y - top) / (float)(full_wall_h - 1)) * (float)(tex_h - 1);
+            else
+                tex_yf = 0.0f;
+            int tex_y = (int)(tex_yf + 0.5f);
+            if (tex_y < 0) tex_y = 0;
+            if (tex_y >= tex_h) tex_y = tex_h - 1;
+
+            /* Compute horizontal texture coordinate from wallX fractional position */
+            int tex_x = (int)(wallX * (double)tex_w);
+            if (tex_x < 0) tex_x = 0;
+            if (tex_x >= tex_w) tex_x = tex_w - 1;
+            int color = get_pixel(texture, tex_x, tex_y);
+
+            /* write into the column image buffer */
+            char *dst = col_addr + (y * col_line_len);
+            *(unsigned int *)dst = (unsigned int)color;
+        }
+
+        /* blit the column to the window at x=screen_x */
+        mlx_put_image_to_window(mlx, win, col_img, screen_x, 0);
+        mlx_destroy_image(mlx, col_img);
     }
+    /* If image creation failed, do not draw any pixels (only use image blit).
+       This intentionally omits any fallback to mlx_pixel_put as requested. */
+    return;
 }
 
 void draw_texture(void *mlx, void *win, t_vars *vars, int ray, int slice_height, double wallX, int tex_index)

@@ -16,7 +16,7 @@ int	init_player(t_vars *vars)
 	vars->player->y = y;
 	vars->player->dir = 0; // Initial direction
 	vars->wall_scale = WALL_SCALE;
-	vars->move_step = 1;
+	vars->move_step = 20;
 	redraw_scene(vars);
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
@@ -27,10 +27,22 @@ void	move(t_vars *vars, int ver, int side)
 		return;
 	/* Erase previous drawing by redrawing the scene background (clears to ceiling/floor) */
 	redraw_scene(vars);
-	if (validate_move(vars, ver, side) == 0)
+	 /* Interpret `ver` as forward/back amount and `side` as strafing amount
+		 relative to the player's current direction (degrees). */
+	 double rad = (double)vars->player->dir * (M_PI / 180.0);
+	 /* forward vector */
+	 double fx = cos(rad);
+	 double fy = sin(rad);
+	 /* right (strafe) vector is +90 degrees from forward */
+	 double sx = cos(rad + (M_PI / 2.0));
+	 double sy = sin(rad + (M_PI / 2.0));
+
+	 int delta_x = (int)round(fx * (double)ver + sx * (double)side);
+	 int delta_y = (int)round(fy * (double)ver + sy * (double)side);
+	if (validate_move(vars, delta_y, delta_x) == 0)
 	{
-		vars->player->y += ver;
-		vars->player->x += side;
+		vars->player->y += delta_y;
+		vars->player->x += delta_x;
 	}
 	/* Re-render 3D view after movement */
 	draw_field_of_view(vars);
