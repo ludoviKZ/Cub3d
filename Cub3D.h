@@ -64,6 +64,7 @@ typedef struct s_vars
 	void	*mlx;
 	void	*win;
 	char	**map;
+	void	*background;
 	int		fd;
 	t_parsing    *parsing;
 	t_player	*player;
@@ -117,9 +118,9 @@ int line_count(char *map_file);
 int mat_free(char **matrix);
 int check_textures(t_parsing *p);
 char **dup_matrix(char **map, t_parsing *p);
-void draw_texture(void *mlx, void *win, t_vars *vars, int ray, int slice_height, double wallX, int tex_index);
+void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index, int *colors);
 int rgb_to_color(char **rgb);
-int load_texture(t_vars *vars, t_texture *texture, int tex_index);
+void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_col, int floor_col);
 //void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
 

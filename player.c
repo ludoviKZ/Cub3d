@@ -1,6 +1,30 @@
 #include <math.h>
 #include "Cub3D.h"
 
+int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
+{
+    int tex_w;
+    int tex_h;
+
+    tex_w = 64;
+    tex_h = 64;
+    texture->img[0] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[0], &tex_w, &tex_h);
+	if (!texture->img[0])
+		return (-1);
+	texture->img[1] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[1], &tex_w, &tex_h);
+	if (!texture->img[1])
+		return (-1);
+	texture->img[2] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[2], &tex_w, &tex_h);
+	if (!texture->img[2])
+		return (-1);
+	texture->img[3] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[3], &tex_w, &tex_h);
+	if (!texture->img[3])
+		return (-1);
+	texture->height = tex_h;
+	texture->width = tex_w;
+    return (0);
+}
+
 int	init_player(t_vars *vars)
 {
 	int	y;
@@ -12,12 +36,24 @@ int	init_player(t_vars *vars)
 	vars->player = (t_player *)malloc(sizeof(t_player));
 	if (!vars->player)
 		return (-1);
+	vars->texture = malloc(sizeof(t_texture));
+	if (!vars->texture)
+		return (free(vars->player), -1);
+	if (init_texture(vars, vars->texture, vars->parsing) == -1)
+		return (free(vars->player), free(vars->texture), -1);
 	vars->player->x = x;
 	vars->player->y = y;
 	vars->player->dir = 0; // Initial direction
 	vars->wall_scale = WALL_SCALE;
 	vars->move_step = 20;
-	redraw_scene(vars);
+	 //redraw_scene(vars);
+	 /* draw full-screen ceiling and floor once into vars->background so the
+		 per-column rendering can blit it for each ray. Use mid/ (mid-1) so
+		 ceiling is y=0..mid-1 and floor is mid..MAP_HEIGHT-1 */
+	//  {
+	// 	  int mid = MAP_HEIGHT / 2;
+	// 	  draw_background(vars, 0, mid, mid - 1, vars->parsing->colors[1], vars->parsing->colors[0]);
+	//  }
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
 }
@@ -25,7 +61,7 @@ void	move(t_vars *vars, int ver, int side)
 {
 	if (!vars->player)
 		return;
-	redraw_scene(vars);
+
 	double rad = (vars->player->dir * M_PI) / 180.0;
 	double dx_f = -cos(rad) * (double)ver;
 	double dy_f = -sin(rad) * (double)ver;
@@ -38,15 +74,16 @@ void	move(t_vars *vars, int ver, int side)
 	{
 		vars->player->y += delta_y;
 		vars->player->x += delta_x;
+		// redraw_scene(vars);
+		draw_field_of_view(vars);
 	}
-	draw_field_of_view(vars);
 }
 void rotate(t_vars *vars, int angle)
 {
 	if (!vars->player)
 		return;
 	/* Redraw background, update direction and re-render 3D view */
-	redraw_scene(vars);
+	// redraw_scene(vars);
 	vars->player->dir = (vars->player->dir + angle);
 	if (vars->player->dir >= 360)
 		vars->player->dir -= 360;

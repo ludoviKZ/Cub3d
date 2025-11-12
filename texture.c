@@ -6,40 +6,11 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/11 19:00:39 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/12 12:52:09 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
-
-int load_texture(t_vars *vars, t_texture *texture, int tex_index)
-{
-    int tex_w;
-    int tex_h;
-
-    tex_w = 64;
-    tex_h = 64;
-    if (!vars || !vars->parsing || !vars->parsing->textures)
-        return (-1);
-    if (tex_index < 0)
-        return (-1);
-    char *path = vars->parsing->textures[tex_index];
-    if (!path)
-        return (-1);
-    texture->img[0] = mlx_xpm_file_to_image(vars->mlx, path, &tex_w, &tex_h);
-    if (!texture->img[0])
-        return (-1);
-    texture->width = tex_w;
-    texture->height = tex_h;
-    texture->addr = mlx_get_data_addr(texture->img[0], &texture->bits_per_pixel,
-                                      &texture->line_length, &texture->endian);
-    if (!texture->addr)
-    {
-        mlx_destroy_image(vars->mlx, texture->img[0]);
-        return (-1);
-    }
-    return (0);
-}
 
 int get_pixel(t_texture *tex, int x, int y)
 {
@@ -49,7 +20,7 @@ int get_pixel(t_texture *tex, int x, int y)
     return (*(int *)pixel);
 }
 
-void draw_wall(void *mlx, void *win, t_texture *texture, int screen_x, int slice_height, double wallX)
+void draw_wall(void *mlx, void *win, t_texture *texture, int screen_x, int slice_height, double wallX, int *colors)
 {
     if (!texture || !texture->addr)
         return;
@@ -92,39 +63,32 @@ void draw_wall(void *mlx, void *win, t_texture *texture, int screen_x, int slice
             if (tex_x >= tex_w) tex_x = tex_w - 1;
             int color = get_pixel(texture, tex_x, tex_y);
 
-            /* write into the column image buffer */
-            char *dst = col_addr + (y * col_line_len);
-            *(unsigned int *)dst = (unsigned int)color;
+                /* write into the column image buffer */
+                char *dst = col_addr + (y * col_line_len);
+                *(unsigned int *)dst = (unsigned int)color;
         }
-
-        /* blit the column to the window at x=screen_x */
-        mlx_put_image_to_window(mlx, win, col_img, screen_x, 0);
+        for (int y = 0; y < draw_top; ++y)
+        {
+            char *dst = col_addr + (y * col_line_len);
+            *(unsigned int *)dst = (unsigned int)colors[1];
+        }
+        for (int y = draw_bottom + 1; y < MAP_HEIGHT; ++y)
+        {
+            char *dst = col_addr + (y * col_line_len);
+            *(unsigned int *)dst = (unsigned int)colors[0];
+        }
+            /* blit the column to the window at x=screen_x */
+            mlx_put_image_to_window(mlx, win, col_img, screen_x, 0);
         mlx_destroy_image(mlx, col_img);
     }
-    /* If image creation failed, do not draw any pixels (only use image blit).
-       This intentionally omits any fallback to mlx_pixel_put as requested. */
     return;
 }
 
-void draw_texture(void *mlx, void *win, t_vars *vars, int ray, int slice_height, double wallX, int tex_index)
+void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index, int *colors)
 {
-    t_texture *texture;
-	(void)mlx;
-	(void)win;
-
-    texture = malloc(sizeof(t_texture));
-    if (!texture)
-        return;
-    if (load_texture(vars, texture, tex_index) != 0)
-    {
-        free(texture);
-        return;
-    }
-
-    draw_wall(vars->mlx, vars->win, texture, ray, slice_height, wallX);
-
-    /* Destroy the image we created for this slice to avoid leaking X11 resources */
-    if (texture->img[0])
-        mlx_destroy_image(vars->mlx, texture->img[0]);
-    free(texture);
+    vars->texture->addr = mlx_get_data_addr(vars->texture->img[tex_index],
+        &vars->texture->bits_per_pixel,
+        &vars->texture->line_length,
+        &vars->texture->endian);
+    draw_wall(vars->mlx, vars->win, vars->texture, ray, slice_height, wallX, colors);
 }
