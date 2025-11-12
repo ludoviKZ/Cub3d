@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/07 18:47:51 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/11 18:04:34 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,14 @@ void check_tex(char *line, int *cont, t_parsing *p)
 		{
 			k += j;
 			skip_spaces(line, &k);
-			if (!p->textures[i])
-				cont[0]++;
-			p->textures[i] = ft_strdup(line + k);
+			{
+				char *tmp = ft_strtrim(line + k, " \t\n");
+				if (!tmp)
+					return ;
+				if (!p->textures[i])
+					cont[0]++;
+				p->textures[i] = tmp;
+			}
 		}
 		i++;
 	}
@@ -96,8 +101,8 @@ int syntax_check_rgb(t_parsing *parsing, char **textures)
 	char *c;
 	int k;
 	int idx;
-	long n;
 
+	/* textures[4] = F (floor), textures[5] = C (ceiling) */
 	i = 4;
 	while (i < 6)
 	{
@@ -110,7 +115,6 @@ int syntax_check_rgb(t_parsing *parsing, char **textures)
 		if (!parts)
 			return (free(trimmed), -1);
 		free(trimmed);
-		printf("parts[] for texture %d: %s, %s, %s\n", i, parts[0], parts[1], parts[2]);
 		if (!parts[0] || !parts[1] || !parts[2] || parts[3])
 			return (printf("Error: Invalid RGB values\n"), mat_free(parts), -1);
 		k = 0;
@@ -122,23 +126,22 @@ int syntax_check_rgb(t_parsing *parsing, char **textures)
 			idx = 0;
 			if (c[0] == '\0')
 				return (free(c), mat_free(parts), -1);
-			while (c[idx])
-			{
-				if (c[idx] < '0' || c[idx] > '9')
-					return (free(c), mat_free(parts), -1);
-				idx++;
-			}
-			n = ft_atoi(c);
+			/* allow decimal or hex digits here; hex_conv will validate fully */
 			free(c);
-			if (n < 0 || n > 255)
-			{
-				mat_free(parts);
-				return (-1);
-			}
 			k++;
 		}
-		parsing->textures[i] = ft_itoa(rgb_to_color(parts));
-		printf("texture[%d] color: %s\n", i, parsing->textures[i]);
+		/* convert to integer color and store into parsing->colors (0=floor,1=ceiling)
+		   idx = i - 4 maps 4->0, 5->1 */
+		int col = rgb_to_color(parts);
+		if (col == -1)
+		{
+			mat_free(parts);
+			return (-1);
+		}
+		parsing->colors[i - 4] = col;
+		/* free original texture string since we no longer need the textual RGB */
+		free(textures[i]);
+		textures[i] = NULL;
 		mat_free(parts);
 		i++;
 	}
@@ -162,8 +165,8 @@ int syntax_check(t_parsing *parsing, char **textures)
 			if (!trimmed)
 				return (-1);
 			fd = open(trimmed, O_RDONLY);
-			// if (fd == -1)
-			//     return (free(trimmed), -1);
+			if (fd == -1)
+				return (free(trimmed), -1);
 			close(fd);
 			free(trimmed);
 		}
@@ -203,6 +206,7 @@ int check_textures(t_parsing *p)
 	i = 0;
 	if (syntax_check(p, p->textures) == -1)
 		return (-1);
-	p->textures[i] = NULL;
+	/* ensure the textures array is NULL-terminated (index 6) */
+	p->textures[6] = NULL;
 	return (0);
 }

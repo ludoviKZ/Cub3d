@@ -65,11 +65,22 @@ void	redraw_scene(t_vars *vars)
 	   ceiling (top half) and floor (bottom half) so the 3D projection can
 	   occupy the full window width. */
 	int mid = MAP_HEIGHT / 2;
-	/* parsing->colors[0] = floor, parsing->colors[1] = ceiling */
+	/* parsing->colors[0] = floor, parsing->colors[1] = ceiling
+	   Use parsed integer colors when available; otherwise fall back to
+	   default macros to avoid dereferencing NULL or uninitialized data. */
+	int ceil_col = CEILING_COLOR;
+	int floor_col = FLOOR_COLOR;
+	if (vars && vars->parsing && vars->parsing->colors)
+	{
+		if (vars->parsing->colors[1] != -1)
+			ceil_col = vars->parsing->colors[1];
+		if (vars->parsing->colors[0] != -1)
+			floor_col = vars->parsing->colors[0];
+	}
 	for (int y = 0; y < mid; ++y)
-		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, ft_atoi(vars->parsing->textures[5]), 1);
+		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, ceil_col, 1);
 	for (int y = mid; y < MAP_HEIGHT; ++y)
-		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, ft_atoi(vars->parsing->textures[4]), 1);
+		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, floor_col, 1);
 }
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness)
 {

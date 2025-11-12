@@ -16,7 +16,7 @@ int	init_player(t_vars *vars)
 	vars->player->y = y;
 	vars->player->dir = 0; // Initial direction
 	vars->wall_scale = WALL_SCALE;
-	vars->move_step = 1;
+	vars->move_step = 20;
 	redraw_scene(vars);
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);

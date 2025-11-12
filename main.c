@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/11 16:33:51 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/11 18:43:48 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,18 @@ static void cleanup(void)
 			mat_free(g_vars->parsing->map);
 		if (g_vars->parsing->textures)
 			mat_free(g_vars->parsing->textures);
+        if (g_vars->parsing->colors)
+            free(g_vars->parsing->colors);
 		free(g_vars->parsing);
+		// mat_free(g_vars->parsing->textures);
+		// int i = 0;
+		// while (g_vars->texture && i < 4)
+		// {
+		// 	if (g_vars->texture->img[i])
+		// 		mlx_destroy_image(g_vars->mlx, g_vars->texture->img[i]);
+		// 	i++;
+		// }
+		// free(g_vars->texture);
 	}
 	free(g_vars);
 	g_vars = NULL;
@@ -52,6 +63,15 @@ int parsing_init(t_parsing *parsing)
 	i = 0;
 	while (i < 7)
 		parsing->textures[i++] = NULL;
+	parsing->colors = malloc(sizeof(int) * 2);
+	if (!parsing->colors)
+	{
+		mat_free(parsing->textures);
+		printf("Error\n");
+		return (-1);
+	}
+	parsing->colors[0] = -1;
+	parsing->colors[1] = -1;
     return (0);
 }
 
@@ -61,11 +81,11 @@ int	key_hook(int keycode, t_vars *vars)
 		return (0);
 	/* Movement keys now use vars->move_step so movement is tied to CELL_SIZE */
 	if (keycode == 's' )
-		move(vars, vars->move_step, 0);
+		move(vars, -vars->move_step, 0);
 	else if (keycode == 'a' )
 		move(vars, 0, -vars->move_step);
 	else if (keycode == 'w' )
-		move(vars, -vars->move_step, 0);
+		move(vars, vars->move_step, 0);
 	else if (keycode == 'd' )
 		move(vars, 0, +vars->move_step);
 	else if (keycode == 'i' ) // Left arrow key
@@ -166,6 +186,8 @@ int main(int argc, char **argv)
 	if (!vars)
 	{
 		mat_free(p->textures);
+		if (p->colors)
+			free(p->colors);
 		free(p);
 		printf("Memory allocation failed");
 		return (1);
@@ -176,6 +198,8 @@ int main(int argc, char **argv)
     {
         printf("Usage: %s <map_file>\n", argv[0]);
 		mat_free(p->textures);
+		if (p->colors)
+			free(p->colors);
 		if (p->map)
 			mat_free(p->map);
 		free(p);
@@ -187,6 +211,8 @@ int main(int argc, char **argv)
 		if (p->map)
 			mat_free(p->map);
 		mat_free(p->textures);
+		if (p->colors)
+			free(p->colors);
 		free(p);
 		return (1);
     }

@@ -47,14 +47,41 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 	r->perpWallDist = perpWallDist;
 	wallDistPixels = perpWallDist * (double)vars->cell_size;
 	r->wallDistPixels = wallDistPixels;
-	 hit_px = r->px + (int)round(r->rayDirX * wallDistPixels);
-	 hit_py = r->py + (int)round(r->rayDirY * wallDistPixels);
+	hit_px = r->px + (int)round(r->rayDirX * wallDistPixels);
+	hit_py = r->py + (int)round(r->rayDirY * wallDistPixels);
 	r->hit_px = hit_px;
 	r->hit_py = hit_py;
 
-	/* Pass perpendicular distance (in map cells) to drawing code so it can
-	   compute slice height without recomputing or using integer hit points. */
-	draw_3D_wall_slice(vars, r->ray_index, r->px, r->py, r->perpWallDist, r->ray_angle);
+	/* Compute wallX: fractional coordinate on the wall (0..1). Use the
+	   perpendicular distance and ray direction to compute the exact hit
+	   position in map coordinates, then take the fractional part. */
+	double wallX;
+	if (r->side == 0)
+		wallX = r->posY + perpWallDist * r->rayDirY;
+	else
+		wallX = r->posX + perpWallDist * r->rayDirX;
+	wallX -= floor(wallX);
+
+	/* Determine which texture to use based on hit side and ray direction.
+	   tex indices: 0=NO,1=SO,2=WE,3=EA (matches parser order). */
+	int tex_index;
+	if (r->side == 0)
+	{
+		if (r->rayDirX > 0)
+			tex_index = 2; /* WE */
+		else
+			tex_index = 3; /* EA */
+	}
+	else
+	{
+		if (r->rayDirY > 0)
+			tex_index = 1; /* SO */
+		else
+			tex_index = 0; /* NO */
+	}
+
+	/* Pass perpendicular distance (in map cells), wallX and texture index to drawing code */
+	draw_3D_wall_slice(vars, r->ray_index, hit_px, hit_py, r->perpWallDist, r->ray_angle, wallX, tex_index);
 }
 
 void setup_dda_extra(t_vars *vars, t_raycast *r)
