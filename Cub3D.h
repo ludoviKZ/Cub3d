@@ -74,9 +74,6 @@ typedef struct s_vars
 	int     cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
 }	t_vars;
 
-/* Raycasting helper structure: groups temporary variables used while
-   casting a single frame. This keeps draw functions' locals in one place
-   so the code can be split across files easily. */
 typedef struct s_raycast
 {
 	int     fov_angle;
@@ -144,5 +141,6 @@ void    setup_dda_extra(t_vars *vars, t_raycast *r);
 void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
 double  compute_delta_dist(double rayDir);
 int	 slice_height_calc(t_vars *vars, double perpWallDist);
+int validate_move_cell(t_vars *vars, double x, double y);
 
 #endif

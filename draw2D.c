@@ -2,50 +2,6 @@
 #include "minilibx/mlx.h"
 #include "Cub3D.h"
 
-void draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color)
-{
-    int x;
-    int y;
-
-    y = 0;
-    while (y < size - 1)
-    {
-        x = 0;
-        while (x < size - 1)
-        {
-            mlx_pixel_put(mlx_ptr, win_ptr, x0 + x, y0 + y, color);
-            x++;
-        }
-        y++;
-    }
-}
-int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
-{
-	int x;
-	int y;
-	int square_size;
-
-	square_size = CELL_SIZE; // Define the size of each square (use CELL_SIZE from header)
-	y = 0;
-	while (y < size[1])
-	{
-		x = 0;
-		while (x < size[0])
-		{
-			if (map[y][x] == '0' || map[y][x] == 'N' || map[y][x] == 'S' || map[y][x] == 'W' || map[y][x] == 'E')
-				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0xFFFFFF);
-			else if (map[y][x] == '1')
-				draw_square(mlx_ptr, win_ptr, x * square_size, y * square_size, square_size, 0x808080);
-			x++;
-		}
-		y++;
-	}
-	return 0;
-}
-
-/* Redraw the entire 2D scene (map). This helper computes the map size from
-   vars->map and calls draw_square2D so callers can erase previous lines and
-   re-render the map before drawing player and FOV. */
 void	redraw_scene(t_vars *vars)
 {
 	int rows = 0;
@@ -61,13 +17,7 @@ void	redraw_scene(t_vars *vars)
 	size[0] = cols;
 	size[1] = rows;
 	printf("Redrawing scene with map size %d x %d\n", cols, rows);
-	/* Instead of drawing the 2D map, clear the window and paint a simple
-	   ceiling (top half) and floor (bottom half) so the 3D projection can
-	   occupy the full window width. */
 	int mid = MAP_HEIGHT / 2;
-	/* parsing->colors[0] = floor, parsing->colors[1] = ceiling
-	   Use parsed integer colors when available; otherwise fall back to
-	   default macros to avoid dereferencing NULL or uninitialized data. */
 	int ceil_col = CEILING_COLOR;
 	int floor_col = FLOOR_COLOR;
 	if (vars && vars->parsing && vars->parsing->colors)

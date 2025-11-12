@@ -23,16 +23,24 @@ int	init_player(t_vars *vars)
 }
 void	move(t_vars *vars, int ver, int side)
 {
+	double rad;
+	double dx_f;
+	double dy_f;
+	double dx_s;
+	double dy_s;
+	double delta_x;
+	double delta_y;
+
 	if (!vars->player)
 		return;
 	redraw_scene(vars);
-	double rad = (vars->player->dir * M_PI) / 180.0;
-	double dx_f = -cos(rad) * (double)ver;
-	double dy_f = -sin(rad) * (double)ver;
-	double dx_s = -sin(rad) * (double)side;
-	double dy_s =  cos(rad) * (double)side;
-	double delta_x = dx_f + dx_s;
-	double delta_y = dy_f + dy_s;
+	rad = (vars->player->dir * M_PI) / 180.0;
+	dx_f = -cos(rad) * (double)ver;
+	dy_f = -sin(rad) * (double)ver;
+	dx_s = -sin(rad) * (double)side;
+	dy_s =  cos(rad) * (double)side;
+	delta_x = dx_f + dx_s;
+	delta_y = dy_f + dy_s;
 
 	if (validate_move(vars, delta_y, delta_x) == 0)
 	{
@@ -70,23 +78,30 @@ int validate_move(t_vars *vars, double ver, double side)
 		return (-1);
 	if (!vars->map)
 		return (-1);
-	int rows = 0;
-	while (vars->map[rows])
-		rows++;
-	int cell_row = (int)(new_y / vars->cell_size);
-	if (cell_row < 0 || cell_row >= rows)
+	if (validate_move_cell(vars, new_x - 3, new_y - 3) != 0)
 		return (-1);
-	int cols = ft_strlen(vars->map[cell_row]);
-	int cell_col = (int)(new_x / vars->cell_size);
-	if (cell_col < 0 || cell_col >= cols)
+	if (validate_move_cell(vars, new_x + 3, new_y - 3) != 0)
 		return (-1);
-	if (vars->map[cell_row][cell_col] == '1')
+	if (validate_move_cell(vars, new_x - 3, new_y + 3) != 0)
 		return (-1);
-	int cell_row2 = (int)((new_y + 3) / vars->cell_size);
-	int cell_col2 = (int)((new_x + 3) / vars->cell_size);
-	if (cell_row2 < 0 || cell_row2 >= rows || cell_col2 < 0 || cell_col2 >= cols)
+	if (validate_move_cell(vars, new_x + 3, new_y + 3) != 0)
 		return (-1);
-	if (vars->map[cell_row2][cell_col2] == '1')
+	return (0);
+}
+int validate_move_cell(t_vars *vars, double x, double y)
+{
+	int map_x;
+	int map_y;
+	int row_len;
+
+	map_x = (int)(x / vars->cell_size);
+	map_y = (int)(y / vars->cell_size);
+	if (map_y < 0 || map_y >= vars->parsing->map_h)
+		return (-1);
+	row_len = ft_strlen(vars->map[map_y]);
+	if (map_x < 0 || map_x >= row_len)
+		return (-1);
+	if (vars->map[map_y][map_x] == '1')
 		return (-1);
 	return (0);
 }
