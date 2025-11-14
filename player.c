@@ -3,12 +3,12 @@
 
 int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
 {
-    int tex_w;
-    int tex_h;
+	int tex_w;
+	int tex_h;
 
-    tex_w = 64;
-    tex_h = 64;
-    texture->img[0] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[0], &tex_w, &tex_h);
+	tex_w = 64;
+	tex_h = 64;
+	texture->img[0] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[0], &tex_w, &tex_h);
 	if (!texture->img[0])
 		return (-1);
 	texture->img[1] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[1], &tex_w, &tex_h);
@@ -22,7 +22,7 @@ int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
 		return (-1);
 	texture->height = tex_h;
 	texture->width = tex_w;
-    return (0);
+	return (0);
 }
 
 int	init_player(t_vars *vars)

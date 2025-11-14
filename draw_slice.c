@@ -46,7 +46,7 @@ void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDi
 	// mlx_put_image_to_window(vars->mlx, vars->win, vars->background, ray, 0);
 	wall_color = 0x808080;
 	if (bottom >= top)
-		draw_texture(vars, ray, slice_height, wallX, tex_index, vars->parsing->colors);
+		draw_texture(vars, ray, slice_height, wallX, tex_index);
 
 	/* floor is handled by the single draw_background call above */
 	return;

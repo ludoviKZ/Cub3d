@@ -4,20 +4,20 @@
 
 void draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color)
 {
-    int x;
-    int y;
+	int x;
+	int y;
 
-    y = 0;
-    while (y < size - 1)
-    {
-        x = 0;
-        while (x < size - 1)
-        {
-            mlx_pixel_put(mlx_ptr, win_ptr, x0 + x, y0 + y, color);
-            x++;
-        }
-        y++;
-    }
+	y = 0;
+	while (y < size - 1)
+	{
+		x = 0;
+		while (x < size - 1)
+		{
+			mlx_pixel_put(mlx_ptr, win_ptr, x0 + x, y0 + y, color);
+			x++;
+		}
+		y++;
+	}
 }
 int draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr)
 {
@@ -91,7 +91,6 @@ void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_c
 	*/
 	if (!vars || !vars->mlx || !vars->win)
 		return;
-
 	if (top < 0)
 		top = 0;
 	if (top > MAP_HEIGHT)

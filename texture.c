@@ -6,89 +6,126 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/12 12:52:09 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/14 18:27:06 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-int get_pixel(t_texture *tex, int x, int y)
+int	get_pixel(t_texture *tex, int x, int y)
 {
-    if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height)
-        return (0);
-    char *pixel = tex->addr + (y * tex->line_length + x * (tex->bits_per_pixel / 8));
-    return (*(int *)pixel);
+	char	*pixel;
+
+	if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height)
+		return (0);
+	pixel = tex->addr + (y * tex->line_length + x * (tex->bits_per_pixel / 8));
+	return (*(int *)pixel);
 }
 
-void draw_wall(void *mlx, void *win, t_texture *texture, int screen_x, int slice_height, double wallX, int *colors)
+/*
+void	draw(int draw_top, int draw_bottom, void *col_img, int *colors, t_texture *texture, int slice_height, int top, double wallX, )
 {
-    if (!texture || !texture->addr)
-        return;
-    int tex_w = texture->width;
-    int tex_h = texture->height;
+	int		i;
 
-    int top = (MAP_HEIGHT / 2) - (slice_height / 2);
-    int bottom = top + slice_height - 1;
+	i = draw_top;
+	while (i <= draw_bottom)
+	{
+		double tex_yf;
+		if (slice_height > 1)
+			tex_yf = ((double)(i - top) / (double)(slice_height - 1)) * (double)(texture->height - 1);
+		else
+			tex_yf = 0.0;
+		int tex_y = (int)(tex_yf + 0.5);
+		if (tex_y < 0)
+			tex_y = 0;
+		if (tex_y >= texture->height)
+			tex_y = texture->height - 1;
+		int tex_x = (int)(wallX * (double)texture->width);
+		if (tex_x < 0)
+			tex_x = 0;
+		if (tex_x >= texture->width)
+			tex_x = texture->width - 1;
+		dst = col_addr + (i * col_line_len);
+		*(unsigned int *)dst = (unsigned int)get_pixel(texture, tex_x, tex_y);
+		i++;
+	}
+}
+*/
 
-    /* visible draw range (clip to screen) */
-    int draw_top = (top < 0) ? 0 : top;
-    int draw_bottom = (bottom >= MAP_HEIGHT) ? (MAP_HEIGHT - 1) : bottom;
+void	draw_wall(t_vars *vars, int screen_x, int slice_height, double wallX)
+{
+	void	*col_img;
+	int		top;
+	int		bottom;
+	char	*dst;
 
-    /* create a temporary 1px-wide image for this column */
-    void *col_img = mlx_new_image(mlx, 1, MAP_HEIGHT);
-    if (col_img)
-    {
-        int col_bpp = 0;
-        int col_line_len = 0;
-        int col_endian = 0;
-        char *col_addr = mlx_get_data_addr(col_img, &col_bpp, &col_line_len, &col_endian);
+	if (!vars->texture || !vars->texture->addr)
+		return ;
+	top = (MAP_HEIGHT / 2) - (slice_height / 2);
+	bottom = top + slice_height - 1;
+	/* visible draw range (clip to screen) */
+	int draw_top = (top < 0) ? 0 : top;
+	int draw_bottom = (bottom >= MAP_HEIGHT) ? (MAP_HEIGHT - 1) : bottom;
+	/* create a temporary 1px-wide image for this column */
+	col_img = mlx_new_image(vars->mlx, 1, MAP_HEIGHT);
+	if (col_img)
+	{
+		vars->texture->col_addr = mlx_get_data_addr(col_img, &vars->texture->col_bpp, &vars->texture->col_line_len, &vars->texture->col_endian);
 
-        /* Use the full wall height (slice_height) when mapping texture coordinates
-           so the texture sampling keeps correct perspective. Only fill the
-           visible rows (draw_top..draw_bottom). */
-        int full_wall_h = slice_height;
-        for (int y = draw_top; y <= draw_bottom; ++y) {
-            float tex_yf;
-            if (full_wall_h > 1)
-                tex_yf = ((float)(y - top) / (float)(full_wall_h - 1)) * (float)(tex_h - 1);
-            else
-                tex_yf = 0.0f;
-            int tex_y = (int)(tex_yf + 0.5f);
-            if (tex_y < 0) tex_y = 0;
-            if (tex_y >= tex_h) tex_y = tex_h - 1;
+		/* Use the full wall height (slice_height) when mapping texture coordinates
+		   so the texture sampling keeps correct perspective. Only fill the
+		   visible rows (draw_top..draw_bottom). */
+		int i = draw_top;
+		while (i <= draw_bottom)
+		{
+			double tex_yf;
+			if (slice_height > 1)
+				tex_yf = ((double)(i - top) / (double)(slice_height - 1)) * (double)(vars->texture->height - 1);
+			else
+				tex_yf = 0.0;
+			int tex_y = (int)(tex_yf + 0.5);
+			if (tex_y < 0)
+				tex_y = 0;
+			if (tex_y >= vars->texture->height)
+				tex_y = vars->texture->height - 1;
 
-            /* Compute horizontal texture coordinate from wallX fractional position */
-            int tex_x = (int)(wallX * (double)tex_w);
-            if (tex_x < 0) tex_x = 0;
-            if (tex_x >= tex_w) tex_x = tex_w - 1;
-            int color = get_pixel(texture, tex_x, tex_y);
-
-                /* write into the column image buffer */
-                char *dst = col_addr + (y * col_line_len);
-                *(unsigned int *)dst = (unsigned int)color;
-        }
-        for (int y = 0; y < draw_top; ++y)
-        {
-            char *dst = col_addr + (y * col_line_len);
-            *(unsigned int *)dst = (unsigned int)colors[1];
-        }
-        for (int y = draw_bottom + 1; y < MAP_HEIGHT; ++y)
-        {
-            char *dst = col_addr + (y * col_line_len);
-            *(unsigned int *)dst = (unsigned int)colors[0];
-        }
-            /* blit the column to the window at x=screen_x */
-            mlx_put_image_to_window(mlx, win, col_img, screen_x, 0);
-        mlx_destroy_image(mlx, col_img);
-    }
-    return;
+			/* Compute horizontal texture coordinate from wallX fractional position */
+			int tex_x = (int)(wallX * (double)vars->texture->width);
+			if (tex_x < 0)
+				tex_x = 0;
+			if (tex_x >= vars->texture->width)
+				tex_x = vars->texture->width - 1;
+			/* write into the column image buffer */
+			dst = vars->texture->col_addr + (i * vars->texture->col_line_len);
+			*(unsigned int *)dst = (unsigned int)get_pixel(vars->texture, tex_x, tex_y);
+			i++;
+		}
+		i = 0;
+		while (i < draw_top)
+		{
+			dst = vars->texture->col_addr + (i * vars->texture->col_line_len);
+			*(unsigned int *)dst = (unsigned int)vars->parsing->colors[1];
+			i++;
+		}
+		i = draw_bottom + 1;
+		while (i < MAP_HEIGHT)
+		{
+			dst = vars->texture->col_addr + (i * vars->texture->col_line_len);
+			*(unsigned int *)dst = (unsigned int)vars->parsing->colors[0];
+			i++;
+		}
+		/* blit the column to the window at x=screen_x */
+		mlx_put_image_to_window(vars->mlx, vars->win, col_img, screen_x, 0);
+		mlx_destroy_image(vars->mlx, col_img);
+	}
+	return;
 }
 
-void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index, int *colors)
+void	draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index)
 {
-    vars->texture->addr = mlx_get_data_addr(vars->texture->img[tex_index],
-        &vars->texture->bits_per_pixel,
-        &vars->texture->line_length,
-        &vars->texture->endian);
-    draw_wall(vars->mlx, vars->win, vars->texture, ray, slice_height, wallX, colors);
+	vars->texture->addr = mlx_get_data_addr(vars->texture->img[tex_index],
+		&vars->texture->bits_per_pixel,
+		&vars->texture->line_length,
+		&vars->texture->endian);
+	draw_wall(vars, ray, slice_height, wallX);
 }

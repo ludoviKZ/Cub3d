@@ -6,23 +6,23 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/12 12:28:10 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/14 17:57:42 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-int skip_spaces(char *line, int *index)
+int	skip_spaces(char *line, int *index)
 {
 	while (line[*index] == ' ' || line[*index] == '\t')
 		(*index)++;
 	return (0);
 }
 
-int check_matr(char **str)
+int	check_matr(char **str)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (str[i])
@@ -39,11 +39,10 @@ int check_matr(char **str)
 	return (0);
 }
 
-int check_lines(char **map)
+int	check_lines(char **map)
 {
-	int i;
-
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (map[i])
@@ -57,13 +56,14 @@ int check_lines(char **map)
 	return (i);
 }
 
-void check_tex(char *line, int *cont, t_parsing *p)
+void	check_tex(char *line, int *cont, t_parsing *p)
 {
-	int i;
-	int j;
-	int k;
-	char *tex_names[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
-	
+	int		i;
+	int		j;
+	int		k;
+	char	*tex_names[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
+	char	*tmp;
+
 	i = 0;
 	while (i < 6)
 	{
@@ -80,27 +80,24 @@ void check_tex(char *line, int *cont, t_parsing *p)
 		{
 			k += j;
 			skip_spaces(line, &k);
-			{
-				char *tmp = ft_strtrim(line + k, " \t\n");
-				if (!tmp)
-					return ;
-				if (!p->textures[i])
-					cont[0]++;
-				p->textures[i] = tmp;
-			}
+			tmp = ft_strtrim(line + k, " \t\n");
+			if (!tmp)
+				return ;
+			if (!p->textures[i])
+				cont[0]++;
+			p->textures[i] = tmp;
 		}
 		i++;
 	}
 }
 
-int syntax_check_rgb(t_parsing *parsing, char **textures)
+int	syntax_check_rgb(t_parsing *parsing, char **textures)
 {
-	int i;
-	char **parts;
-	char *trimmed;
-	char *c;
-	int k;
-	int idx;
+	int		i;
+	char	**parts;
+	char	*trimmed;
+	char	*c;
+	int		k;
 
 	/* textures[4] = F (floor), textures[5] = C (ceiling) */
 	i = 4;
@@ -123,7 +120,6 @@ int syntax_check_rgb(t_parsing *parsing, char **textures)
 			c = ft_strtrim(parts[k], " \t\n");
 			if (!c)
 				return (mat_free(parts), -1);
-			idx = 0;
 			if (c[0] == '\0')
 				return (free(c), mat_free(parts), -1);
 			/* allow decimal or hex digits here; hex_conv will validate fully */
@@ -132,13 +128,9 @@ int syntax_check_rgb(t_parsing *parsing, char **textures)
 		}
 		/* convert to integer color and store into parsing->colors (0=floor,1=ceiling)
 		   idx = i - 4 maps 4->0, 5->1 */
-		int col = rgb_to_color(parts);
-		if (col == -1)
-		{
-			mat_free(parts);
-			return (-1);
-		}
-		parsing->colors[i - 4] = col;
+		parsing->colors[i - 4] = rgb_to_color(parts);
+		if (parsing->colors[i - 4] == -1)
+			return (printf("Error\n"), mat_free(parts), -1);
 		/* free original texture string since we no longer need the textual RGB */
 		free(textures[i]);
 		textures[i] = NULL;
@@ -148,11 +140,11 @@ int syntax_check_rgb(t_parsing *parsing, char **textures)
 	return (0);
 }
 
-int syntax_check(t_parsing *parsing, char **textures)
+int	syntax_check(t_parsing *parsing, char **textures)
 {
-	int i;
-	int fd;
-	char *trimmed;
+	int		i;
+	int		fd;
+	char	*trimmed;
 
 	i = 0;
 	while (i < 6)
@@ -177,11 +169,11 @@ int syntax_check(t_parsing *parsing, char **textures)
 	return (0);
 }
 
-int check_textures(t_parsing *p)
+int	check_textures(t_parsing *p)
 {
-	int i;
-	int j;
-	int cont;
+	int		i;
+	int		j;
+	int		cont;
 
 	i = 0;
 	cont = 0;
