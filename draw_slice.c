@@ -39,13 +39,15 @@ void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDi
 		top = 0;
 	if (bottom >= MAP_HEIGHT)
 		bottom = MAP_HEIGHT - 1;
-	if (top > 0)
-		draw_line2D(vars->mlx, vars->win, ray, 0, ray, top - 1, vars->parsing->colors[1], 1);
+	/* Draw ceiling and floor for this column in a single call. Pass both
+	   ceiling and floor parsed colors (parsing->colors[1] = ceiling,
+	   parsing->colors[0] = floor). Keep a single blit per-column. */
+	//draw_background(vars, ray, top, bottom, vars->parsing->colors[1], vars->parsing->colors[0]);
+	// mlx_put_image_to_window(vars->mlx, vars->win, vars->background, ray, 0);
 	wall_color = 0x808080;
 	if (bottom >= top)
-		draw_texture(vars->mlx, vars->win, vars, ray, slice_height, wallX, tex_index);
+		draw_texture(vars, ray, slice_height, wallX, tex_index);
 
-	if (bottom < MAP_HEIGHT - 1)
-		draw_line2D(vars->mlx, vars->win, ray, bottom + 1, ray, MAP_HEIGHT - 1, vars->parsing->colors[0], 1);
+	/* floor is handled by the single draw_background call above */
 	return;
 }

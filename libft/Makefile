@@ -9,15 +9,15 @@ RM = rm -f
 CFLAGS = -Wall -Wextra -Werror
 
 .c.o:
-	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
+	@${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
 
 ${NAME}: ${OBJ}
-	${LIBC} ${NAME} ${OBJ}
+	@${LIBC} ${NAME} ${OBJ}
 
 all: ${NAME}
 
 bonus: ${NAME} ${OBJB}
-	${LIBC} ${NAME} ${OBJB}
+	@${LIBC} ${NAME} ${OBJB}
 clean:
 	${RM} ${OBJ} ${OBJB}
 

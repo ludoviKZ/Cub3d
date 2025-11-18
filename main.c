@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/12 11:17:51 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/11/18 16:52:07 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ static void cleanup(void)
 			mat_free(g_vars->parsing->map);
 		if (g_vars->parsing->textures)
 			mat_free(g_vars->parsing->textures);
-        if (g_vars->parsing->colors)
-            free(g_vars->parsing->colors);
+		if (g_vars->parsing->colors)
+			free(g_vars->parsing->colors);
 		free(g_vars->parsing);
 		// mat_free(g_vars->parsing->textures);
 		// int i = 0;
@@ -42,7 +42,6 @@ static void cleanup(void)
 	free(g_vars);
 	g_vars = NULL;
 }
-
 
 int parsing_init(t_parsing *parsing)
 {
@@ -72,7 +71,7 @@ int parsing_init(t_parsing *parsing)
 	}
 	parsing->colors[0] = -1;
 	parsing->colors[1] = -1;
-    return (0);
+	return (0);
 }
 
 int	key_hook(int keycode, t_vars *vars)
@@ -173,16 +172,16 @@ int	close_window(t_vars *vars)
 int main(int argc, char **argv)
 {
 	t_vars *vars;
-    t_parsing *p;
+	t_parsing *p;
 
    	p = malloc(sizeof(t_parsing));
-    if (!p)
-    {
-        printf("Memory allocation failed");
-        return (1);
-    }
-    parsing_init(p);
-    vars = malloc(sizeof(t_vars));
+	if (!p)
+	{
+		printf("Memory allocation failed");
+		return (1);
+	}
+	parsing_init(p);
+	vars = malloc(sizeof(t_vars));
 	if (!vars)
 	{
 		mat_free(p->textures);
@@ -192,11 +191,11 @@ int main(int argc, char **argv)
 		printf("Memory allocation failed");
 		return (1);
 	}
-    vars->parsing = p;
+	vars->parsing = p;
 	g_vars = vars;
-    if (argc != 2)
-    {
-        printf("Usage: %s <map_file>\n", argv[0]);
+	if (argc != 2)
+	{
+		printf("Usage: %s <map_file>\n", argv[0]);
 		mat_free(p->textures);
 		if (p->colors)
 			free(p->colors);
@@ -204,9 +203,9 @@ int main(int argc, char **argv)
 			mat_free(p->map);
 		free(p);
 		return (1);
-    }
-    if (parsing(p, argv[1]) < 0)
-    {
+	}
+	if (parsing(p, argv[1]) < 0)
+	{
 		printf("Parsing failed\n");
 		if (p->map)
 			mat_free(p->map);
@@ -215,13 +214,13 @@ int main(int argc, char **argv)
 			free(p->colors);
 		free(p);
 		return (1);
-    }
+	}
 	vars->mlx = mlx_init();
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
 	printf("Map loaded successfully. Initializing player...\n");
 	vars->map = p->map;
 	vars->parsing = p;
-	redraw_scene(vars);
+	//redraw_scene(vars);
 	init_player(vars);
 	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
 	//mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
