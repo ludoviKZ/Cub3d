@@ -63,6 +63,16 @@ typedef struct s_line2D
 	int end;
 }	t_line2D;
 
+typedef struct s_keys
+{
+	int	w;
+	int	a;
+	int	s;
+	int	d;
+	int	left;
+	int	right;
+}	t_keys;
+
 typedef struct s_vars
 {
 	void	*mlx;
@@ -124,7 +134,6 @@ int check_textures(t_parsing *p);
 char **dup_matrix(char **map, t_parsing *p);
 void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index);
 int rgb_to_color(char **rgb);
-void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_col, int floor_col);
 //void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
 
