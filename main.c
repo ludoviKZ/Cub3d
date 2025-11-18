@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/18 18:44:40 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/11/18 19:29:34 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 	vars->texture = NULL;
 	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
 	vars->wall_scale = WALL_SCALE;
-	vars->move_step = 20;
+	vars->move_step = 10;
 	vars->cell_size = CELL_SIZE;
 	g_vars = vars;
 	if (argc != 2)

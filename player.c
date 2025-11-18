@@ -129,12 +129,14 @@ int move(void *param)
 	if (vars->keys.d)
 		side += vars->move_step;
 	/* apply rotation keys if desired (left/right) */
-	if ( !vars->keys.left || !vars->keys.right)
+	if ( (!vars->keys.left || !vars->keys.right))
 	{
 		if (vars->keys.left)
 			rotate(vars, -3);
 		if (vars->keys.right)
 			rotate(vars, 3);
+		if (ver == 0 && side == 0)
+			draw_field_of_view(vars);
 		if (ver == 0 && side == 0)
 			return (0);
 	}
@@ -150,9 +152,7 @@ int move(void *param)
 	{
 		vars->player->y += delta_y;
 		vars->player->x += delta_x;
-		draw_field_of_view(vars);
 	}
-	if (vars->keys.left || vars->keys.right)
-		draw_field_of_view(vars);
+	draw_field_of_view(vars);
 	return (0);
 }
