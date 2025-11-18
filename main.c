@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/18 16:52:07 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/11/18 18:23:37 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,89 +74,43 @@ int parsing_init(t_parsing *parsing)
 	return (0);
 }
 
-int	key_hook(int keycode, t_vars *vars)
+int key_hook(int keycode, t_vars *vars)
 {
+	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
 	if (!vars)
 		return (0);
-	/* Movement keys now use vars->move_step so movement is tied to CELL_SIZE */
-	if (keycode == 's' )
-		move(vars, vars->move_step, 0);
-	else if (keycode == 'a' )
-		move(vars, 0, -vars->move_step);
-	else if (keycode == 'w' )
-		move(vars, -vars->move_step, 0);
-	else if (keycode == 'd' )
-		move(vars, 0, +vars->move_step);
-	else if (keycode == 'i' ) // Left arrow key
-		rotate(vars, -5);
-	else if (keycode == 'o' ) // Right arrow key
-		rotate(vars, 5);
-	/* Runtime adjustments: '[' and ']' change movement step (pixels), '+'/'-' change wall scale */
-	else if (keycode == '[')
-	{
-		if (vars->move_step > 1)
-			vars->move_step--;
-		printf("move_step = %d\n", vars->move_step);
-	}
-	else if (keycode == ']')
-	{
-		vars->move_step++;
-		printf("move_step = %d\n", vars->move_step);
-	}
-	else if (keycode == '+')
-	{
-		vars->wall_scale += 0.1;
-		if (vars->wall_scale > 10.0) vars->wall_scale = 10.0;
-		printf("wall_scale = %.2f\n", vars->wall_scale);
-	}
-	else if (keycode == '-')
-	{
-		vars->wall_scale -= 0.1;
-		if (vars->wall_scale < 0.1) vars->wall_scale = 0.1;
-		printf("wall_scale = %.2f\n", vars->wall_scale);
-	}
-	else if (keycode == ',')
-	{
-		/* decrease cell size */
-		if (vars->cell_size > 4)
-			vars->cell_size--;
-		vars->move_step = (vars->cell_size > 1) ? (vars->cell_size / 2) : 1;
-		/* re-center player to the same map cell */
-		if (vars->player)
-		{
-			vars->player->x = vars->parsing->pl_x * vars->cell_size;
-			vars->player->y = vars->parsing->pl_y * vars->cell_size;
-		}
-		redraw_scene(vars);
-		draw_field_of_view(vars);
-		printf("cell_size = %d\n", vars->cell_size);
-	}
-	else if (keycode == '.')
-	{
-		/* increase cell size */
-		if (vars->cell_size < 128)
-			vars->cell_size++;
-		vars->move_step = (vars->cell_size > 1) ? (vars->cell_size / 2) : 1;
-		if (vars->player)
-		{
-			vars->player->x = vars->parsing->pl_x * vars->cell_size;
-			vars->player->y = vars->parsing->pl_y * vars->cell_size;
-		}
-		redraw_scene(vars);
-		draw_field_of_view(vars);
-		printf("cell_size = %d\n", vars->cell_size);
-	}
-	else if (keycode == 'f') // redraw FOV
-	{
-		draw_field_of_view(vars);
-	}
-	else if (keycode == 65307) // Escape key
-	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		mlx_destroy_display(vars->mlx);
-		cleanup();
-		exit(EXIT_SUCCESS);
-	}
+	if (keycode == 'w')
+		vars->keys.w = 1;
+	else if (keycode == 'a')
+		vars->keys.a = 1;
+	else if (keycode == 's')
+		vars->keys.s = 1;
+	else if (keycode == 'd')
+		vars->keys.d = 1;
+	else if (keycode == 'i') // Left arrow key
+		vars->keys.left = 1;
+	else if (keycode == 'o') // Right arrow key
+		vars->keys.right = 1;
+	return (0);
+}
+
+int key_release(int keycode, t_vars *vars)
+{
+	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
+	if (!vars)
+		return (0);
+	if (keycode == 'w')
+		vars->keys.w = 0;
+	else if (keycode == 'a')
+		vars->keys.a = 0;
+	else if (keycode == 's')
+		vars->keys.s = 0;
+	else if (keycode == 'd')
+		vars->keys.d = 0;
+	else if (keycode == 'i') // Left arrow key
+		vars->keys.left = 0;
+	else if (keycode == 'o') // Right arrow key
+		vars->keys.right = 0;
 	return (0);
 }
 
@@ -223,8 +177,8 @@ int main(int argc, char **argv)
 	//redraw_scene(vars);
 	init_player(vars);
 	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
-	//mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
-	mlx_loop_hook(vars->mlx, key_hook, vars);
+	mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
+	 mlx_loop_hook(vars->mlx, move, vars);	
 	mlx_hook(vars->win, 17, 0, close_window, vars);    /* DestroyNotify */
 	mlx_loop(vars->mlx);
 	return (0);

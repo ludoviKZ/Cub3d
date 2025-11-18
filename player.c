@@ -46,44 +46,10 @@ int	init_player(t_vars *vars)
 	vars->player->dir = 0; // Initial direction
 	vars->wall_scale = WALL_SCALE;
 	vars->move_step = 20;
-	 //redraw_scene(vars);
-	 /* draw full-screen ceiling and floor once into vars->background so the
-		 per-column rendering can blit it for each ray. Use mid/ (mid-1) so
-		 ceiling is y=0..mid-1 and floor is mid..MAP_HEIGHT-1 */
-	//  {
-	// 	  int mid = MAP_HEIGHT / 2;
-	// 	  draw_background(vars, 0, mid, mid - 1, vars->parsing->colors[1], vars->parsing->colors[0]);
-	//  }
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
 }
-void	move(t_vars *vars, int ver, int side)
-{
-	double rad;
-	double dx_f;
-	double dy_f;
-	double dx_s;
-	double dy_s;
-	double delta_x;
-	double delta_y;
 
-	if (!vars->player)
-		return;
-	rad = (vars->player->dir * M_PI) / 180.0;
-	dx_f = -cos(rad) * (double)ver;
-	dy_f = -sin(rad) * (double)ver;
-	dx_s = -sin(rad) * (double)side;
-	dy_s =  cos(rad) * (double)side;
-	delta_x = dx_f + dx_s;
-	delta_y = dy_f + dy_s;
-	if (validate_move(vars, delta_y, delta_x) == 0)
-	{
-		vars->player->y += delta_y;
-		vars->player->x += delta_x;
-		// redraw_scene(vars);
-		draw_field_of_view(vars);
-	}
-}
 void rotate(t_vars *vars, int angle)
 {
 	if (!vars->player)
@@ -98,6 +64,7 @@ void rotate(t_vars *vars, int angle)
 	draw_field_of_view(vars);
 	printf("Player direction: %d degrees\n", vars->player->dir);
 }
+
 int validate_move(t_vars *vars, double ver, double side)
 {
 	double new_x;
@@ -113,30 +80,72 @@ int validate_move(t_vars *vars, double ver, double side)
 		return (-1);
 	if (!vars->map)
 		return (-1);
-	if (validate_move_cell(vars, new_x - 3, new_y - 3) != 0)
+	int rows = 0;
+	while (vars->map[rows])
+		rows++;
+	int cell_row = (int)(new_y / vars->cell_size);
+	if (cell_row < 0 || cell_row >= rows)
 		return (-1);
-	if (validate_move_cell(vars, new_x + 3, new_y - 3) != 0)
+	int cols = ft_strlen(vars->map[cell_row]);
+	int cell_col = (int)(new_x / vars->cell_size);
+	if (cell_col < 0 || cell_col >= cols)
 		return (-1);
-	if (validate_move_cell(vars, new_x - 3, new_y + 3) != 0)
+	if (vars->map[cell_row][cell_col] == '1')
 		return (-1);
-	if (validate_move_cell(vars, new_x + 3, new_y + 3) != 0)
+	int cell_row2 = (int)((new_y + 3) / vars->cell_size);
+	int cell_col2 = (int)((new_x + 3) / vars->cell_size);
+	if (cell_row2 < 0 || cell_row2 >= rows || cell_col2 < 0 || cell_col2 >= cols)
+		return (-1);
+	if (vars->map[cell_row2][cell_col2] == '1')
 		return (-1);
 	return (0);
 }
-int validate_move_cell(t_vars *vars, double x, double y)
-{
-	int map_x;
-	int map_y;
-	int row_len;
 
-	map_x = (int)(x / vars->cell_size);
-	map_y = (int)(y / vars->cell_size);
-	if (map_y < 0 || map_y >= vars->parsing->map_h)
-		return (-1);
-	row_len = ft_strlen(vars->map[map_y]);
-	if (map_x < 0 || map_x >= row_len)
-		return (-1);
-	if (vars->map[map_y][map_x] == '1')
-		return (-1);
+/* Loop hook: poll keys stored in vars->keys and move player accordingly. */
+int move(void *param)
+{
+	t_vars *vars = (t_vars *)param;
+	int ver = 0;
+	int side = 0;
+
+	if (!vars || !vars->player)
+		return (0);
+	/* set intended forward/back and strafing based on keys state */
+	if (vars->keys.w)
+		ver -= vars->move_step;
+	if (vars->keys.s)
+		ver += vars->move_step;
+	if (vars->keys.a)
+		side -= vars->move_step;
+	if (vars->keys.d)
+		side += vars->move_step;
+	/* apply rotation keys if desired (left/right) */
+	if (vars->keys.left && vars->keys.right)
+		; /* no rotation if both pressed */
+	else
+	{
+		if (vars->keys.left)
+			rotate(vars, -5);
+		if (vars->keys.right)
+			rotate(vars, 5);
+	
+		if (ver == 0 && side == 0)
+			return (0);
+	}
+
+	double rad = (vars->player->dir * M_PI) / 180.0;
+	double dx_f = -cos(rad) * (double)ver;
+	double dy_f = -sin(rad) * (double)ver;
+	double dx_s = -sin(rad) * (double)side;
+	double dy_s =  cos(rad) * (double)side;
+	double delta_x = dx_f + dx_s;
+	double delta_y = dy_f + dy_s;
+
+	if (validate_move(vars, delta_y, delta_x) == 0)
+	{
+		vars->player->y += delta_y;
+		vars->player->x += delta_x;
+		draw_field_of_view(vars);
+	}
 	return (0);
 }
