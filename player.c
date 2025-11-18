@@ -43,25 +43,38 @@ int	init_player(t_vars *vars)
 		return (free(vars->player), free(vars->texture), -1);
 	vars->player->x = x;
 	vars->player->y = y;
-	vars->player->dir = 0; // Initial direction
+	/* Initialize player direction from parsing->pl_dir if available. Map
+	   compass directions to degrees (0 = East, 90 = North). */
+	if (vars->parsing && vars->parsing->pl_dir)
+	{
+		if (vars->parsing->pl_dir == 'N')
+			vars->player->dir = 90;
+		else if (vars->parsing->pl_dir == 'S')
+			vars->player->dir = 270;
+		else if (vars->parsing->pl_dir == 'E')
+			vars->player->dir = 0;
+		else if (vars->parsing->pl_dir == 'W')
+			vars->player->dir = 180;
+		else
+			vars->player->dir = 0;
+	}
+	else
+		vars->player->dir = 0;
 	vars->wall_scale = WALL_SCALE;
 	vars->move_step = 20;
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
 }
-
 void rotate(t_vars *vars, int angle)
 {
 	if (!vars->player)
 		return;
-	/* Redraw background, update direction and re-render 3D view */
-	// redraw_scene(vars);
+
 	vars->player->dir = (vars->player->dir + angle);
 	if (vars->player->dir >= 360)
 		vars->player->dir -= 360;
 	else if (vars->player->dir < 0)
 		vars->player->dir += 360;
-	draw_field_of_view(vars);
 	printf("Player direction: %d degrees\n", vars->player->dir);
 }
 
@@ -74,10 +87,6 @@ int validate_move(t_vars *vars, double ver, double side)
 		return (-1);
 	new_x = vars->player->x + side;
 	new_y = vars->player->y + ver;
-	if (new_x < 0 || new_x >= MAP_WIDTH || new_y < 0 || new_y >= MAP_HEIGHT)
-		return (-1);
-	if ((new_x + 3) < 0 || (new_x + 3) >= MAP_WIDTH || (new_y + 3) < 0 || (new_y + 3) >= MAP_HEIGHT)
-		return (-1);
 	if (!vars->map)
 		return (-1);
 	int rows = 0;
@@ -96,7 +105,7 @@ int validate_move(t_vars *vars, double ver, double side)
 	int cell_col2 = (int)((new_x + 3) / vars->cell_size);
 	if (cell_row2 < 0 || cell_row2 >= rows || cell_col2 < 0 || cell_col2 >= cols)
 		return (-1);
-	if (vars->map[cell_row2][cell_col2] == '1')
+	if (vars->map[cell_row2][cell_col2] == '1' || vars->map[cell_row][cell_col2] == '1' || vars->map[cell_row2][cell_col] == '1')
 		return (-1);
 	return (0);
 }
@@ -120,19 +129,15 @@ int move(void *param)
 	if (vars->keys.d)
 		side += vars->move_step;
 	/* apply rotation keys if desired (left/right) */
-	if (vars->keys.left && vars->keys.right)
-		; /* no rotation if both pressed */
-	else
+	if ( !vars->keys.left || !vars->keys.right)
 	{
 		if (vars->keys.left)
-			rotate(vars, -5);
+			rotate(vars, -3);
 		if (vars->keys.right)
-			rotate(vars, 5);
-	
+			rotate(vars, 3);
 		if (ver == 0 && side == 0)
 			return (0);
 	}
-
 	double rad = (vars->player->dir * M_PI) / 180.0;
 	double dx_f = -cos(rad) * (double)ver;
 	double dy_f = -sin(rad) * (double)ver;
@@ -147,5 +152,7 @@ int move(void *param)
 		vars->player->x += delta_x;
 		draw_field_of_view(vars);
 	}
+	if (vars->keys.left || vars->keys.right)
+		draw_field_of_view(vars);
 	return (0);
 }

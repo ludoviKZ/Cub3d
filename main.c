@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/18 18:23:37 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/11/18 18:44:40 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ int parsing_init(t_parsing *parsing)
 
 int key_hook(int keycode, t_vars *vars)
 {
-	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
 	if (!vars)
 		return (0);
+	/* Update shared keys state in vars->keys */
 	if (keycode == 'w')
 		vars->keys.w = 1;
 	else if (keycode == 'a')
@@ -87,18 +87,18 @@ int key_hook(int keycode, t_vars *vars)
 		vars->keys.s = 1;
 	else if (keycode == 'd')
 		vars->keys.d = 1;
-	else if (keycode == 'i') // Left arrow key
+	else if (keycode == 'i') /* Left rotation */
 		vars->keys.left = 1;
-	else if (keycode == 'o') // Right arrow key
+	else if (keycode == 'o') /* Right rotation */
 		vars->keys.right = 1;
 	return (0);
 }
 
 int key_release(int keycode, t_vars *vars)
 {
-	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
 	if (!vars)
 		return (0);
+	/* Clear keys state in vars->keys */
 	if (keycode == 'w')
 		vars->keys.w = 0;
 	else if (keycode == 'a')
@@ -107,9 +107,9 @@ int key_release(int keycode, t_vars *vars)
 		vars->keys.s = 0;
 	else if (keycode == 'd')
 		vars->keys.d = 0;
-	else if (keycode == 'i') // Left arrow key
+	else if (keycode == 'i') /* Left rotation */
 		vars->keys.left = 0;
-	else if (keycode == 'o') // Right arrow key
+	else if (keycode == 'o') /* Right rotation */
 		vars->keys.right = 0;
 	return (0);
 }
@@ -146,6 +146,17 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	vars->parsing = p;
+	/* Initialize runtime fields to safe defaults */
+	vars->mlx = NULL;
+	vars->win = NULL;
+	vars->background = NULL;
+	vars->fd = -1;
+	vars->player = NULL;
+	vars->texture = NULL;
+	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
+	vars->wall_scale = WALL_SCALE;
+	vars->move_step = 20;
+	vars->cell_size = CELL_SIZE;
 	g_vars = vars;
 	if (argc != 2)
 	{
@@ -178,7 +189,7 @@ int main(int argc, char **argv)
 	init_player(vars);
 	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
 	mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
-	 mlx_loop_hook(vars->mlx, move, vars);	
+	mlx_loop_hook(vars->mlx, move, vars);
 	mlx_hook(vars->win, 17, 0, close_window, vars);    /* DestroyNotify */
 	mlx_loop(vars->mlx);
 	return (0);

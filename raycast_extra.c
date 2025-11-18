@@ -80,7 +80,8 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 			tex_index = 0; /* NO */
 	}
 
-	/* Pass perpendicular distance (in map cells), wallX and texture index to drawing code */
+	if (tex_index == 1 || tex_index == 3)
+		wallX = 1.0 - wallX; /* Flip for SO and EA walls */
 	draw_3D_wall_slice(vars, r->ray_index, hit_px, hit_py, r->perpWallDist, r->ray_angle, wallX, tex_index);
 }
 
