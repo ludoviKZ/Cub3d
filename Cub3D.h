@@ -83,6 +83,7 @@ typedef struct s_vars
 	t_parsing    *parsing;
 	t_player	*player;
 	t_texture	*texture;
+	t_keys		keys;
 	/* Runtime adjustable parameters */
 	double  wall_scale; /* current wall scale (initialized from WALL_SCALE) */
 	int     move_step;  /* pixels moved per step */
@@ -141,7 +142,7 @@ int rgb_to_color(char **rgb);
 int		draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr);
 void	draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color);
 int		init_player(t_vars *vars);
-void	move(t_vars *vars, int ver, int side);
+int	move(void *param);
 void	rotate(t_vars *vars, int angle);
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness);
 int validate_move(t_vars *vars, double ver, double side);

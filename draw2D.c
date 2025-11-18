@@ -82,13 +82,13 @@ void	redraw_scene(t_vars *vars)
 	for (int y = mid; y < MAP_HEIGHT; ++y)
 		draw_line2D(vars->mlx, vars->win, 0, y, MAP_WIDTH - 1, y, floor_col, 1);
 }
-void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_col, int floor_col)
+/*void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_col, int floor_col)
 {
-	/* Draw the ceiling (y=0..top-1) and the floor (y=bottom+1..MAP_HEIGHT-1)
+	 Draw the ceiling (y=0..top-1) and the floor (y=bottom+1..MAP_HEIGHT-1)
 	   for a single x column. We create a 1 x MAP_HEIGHT image, fill only the
 	   ceiling and floor spans, then blit it once to avoid overwriting wall
 	   pixels drawn separately.
-	*/
+	
 	if (!vars || !vars->mlx || !vars->win)
 		return;
 	if (top < 0)
@@ -100,7 +100,7 @@ void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_c
 	if (bottom >= MAP_HEIGHT)
 		bottom = MAP_HEIGHT - 1;
 
-	/* If neither ceiling nor floor needs drawing, skip */
+	 If neither ceiling nor floor needs drawing, skip
 	int need_ceil = (top > 0);
 	int need_floor = (bottom < MAP_HEIGHT - 1);
 	if (!need_ceil && !need_floor)
@@ -121,7 +121,7 @@ void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_c
 	}
 
 	//int pixel_size = bpp / 8;
-	/* Fill ceiling span */
+	Fill ceiling span
 	if (need_ceil)
 	{
 		int y_end = top - 1;
@@ -134,7 +134,7 @@ void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_c
 		}
 	}
 
-	/* Fill floor span */
+	 Fill floor span
 	if (need_floor)
 	{
 		int y_start = bottom + 1;
@@ -149,6 +149,7 @@ void draw_background(t_vars *vars, int screen_x, int top, int bottom, int ceil_c
 	vars->background = col_img;
 	mlx_put_image_to_window(vars->mlx, vars->win, col_img, screen_x, 0);
 }
+*/
 
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness)
 {
