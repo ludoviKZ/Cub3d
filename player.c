@@ -66,7 +66,6 @@ int	init_player(t_vars *vars)
 	else
 		vars->player->dir = 0;
 	vars->wall_scale = WALL_SCALE;
-	vars->move_step = 20;
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
 }
@@ -83,34 +82,56 @@ void rotate(t_vars *vars, int angle)
 	printf("Player direction: %d degrees\n", vars->player->dir);
 }
 
-int validate_move(t_vars *vars, double ver, double side)
+int validate_move(t_vars *vars, double *ver, double *side)
 {
-	double new_x;
-	double new_y;
+	t_moveval move;
 
 	if (!vars || !vars->player)
 		return (-1);
-	new_x = vars->player->x + side;
-	new_y = vars->player->y + ver;
+	move.new_x = vars->player->x + *side;
+	move.new_y = vars->player->y + *ver;
 	if (!vars->map)
 		return (-1);
-	int rows = 0;
-	while (vars->map[rows])
-		rows++;
-	int cell_row = (int)(new_y / vars->cell_size);
-	if (cell_row < 0 || cell_row >= rows)
+	move.rows = 0;
+	while (vars->map[move.rows])
+		move.rows++;
+	move.cell_row = (int)(move.new_y / vars->cell_size);
+	if (move.cell_row < 0 || move.cell_row >= move.rows)
 		return (-1);
-	int cols = ft_strlen(vars->map[cell_row]);
-	int cell_col = (int)(new_x / vars->cell_size);
-	if (cell_col < 0 || cell_col >= cols)
+	move.cell_col = (int)(move.new_x / vars->cell_size);
+	if (move.cell_col < 0 || move.cell_col >= ft_strlen(vars->map[move.cell_row]))
 		return (-1);
-	if (vars->map[cell_row][cell_col] == '1')
+	if (vars->map[move.cell_row][move.cell_col] == '1')
 		return (-1);
-	int cell_row2 = (int)((new_y + 3) / vars->cell_size);
-	int cell_col2 = (int)((new_x + 3) / vars->cell_size);
-	if (cell_row2 < 0 || cell_row2 >= rows || cell_col2 < 0 || cell_col2 >= cols)
+	if (vars->map[move.cell_row][move.cell_col] == 'F')
 		return (-1);
-	if (vars->map[cell_row2][cell_col2] == '1' || vars->map[cell_row][cell_col2] == '1' || vars->map[cell_row2][cell_col] == '1')
+	if (check_for_close_walls(vars, move) == -1)
+		return (-1);
+	return (0);
+}
+int check_for_close_walls(t_vars *vars, t_moveval move)
+{
+	move.cell_row2 = (int)((move.new_y + 3) / vars->cell_size);
+	move.cell_col2 = (int)((move.new_x + 3) / vars->cell_size);
+	move.cell_row3 = (int)((move.new_y + -3) / vars->cell_size);
+	move.cell_col3 = (int)((move.new_x + -3) / vars->cell_size);
+	if (move.cell_row2 < 0 || move.cell_row2 >= move.rows || move.cell_col2 < 0 || move.cell_col2 >= ft_strlen(vars->map[move.cell_row2]))
+		return (-1);
+	if (vars->map[move.cell_row2][move.cell_col2] == '1' || vars->map[move.cell_row][move.cell_col2] == '1' 
+		|| vars->map[move.cell_row2][move.cell_col] == '1')
+		return (-1);
+	if (vars->map[move.cell_row2][move.cell_col2] == 'F' || vars->map[move.cell_row][move.cell_col2] == 'F'
+		 || vars->map[move.cell_row2][move.cell_col] == 'F')
+		return (-1);
+	if (vars->map[move.cell_row3][move.cell_col3] == '1' || vars->map[move.cell_row][move.cell_col3] == '1' 
+		|| vars->map[move.cell_row3][move.cell_col] == '1')
+		return (-1);
+	if (vars->map[move.cell_row3][move.cell_col3] == 'F' || vars->map[move.cell_row][move.cell_col3] == 'F' 
+		|| vars->map[move.cell_row3][move.cell_col] == 'F')
+		return (-1);
+	if (vars->map[move.cell_row2][move.cell_col3] == '1' || vars->map[move.cell_row3][move.cell_col2] == '1')
+		return (-1);
+	if (vars->map[move.cell_row2][move.cell_col3] == 'F' || vars->map[move.cell_row3][move.cell_col2] == 'F')
 		return (-1);
 	return (0);
 }
@@ -124,7 +145,6 @@ int move(void *param)
 
 	if (!vars || !vars->player)
 		return (0);
-	/* set intended forward/back and strafing based on keys state */
 	if (vars->keys.w)
 		ver -= vars->move_step;
 	if (vars->keys.s)
@@ -133,8 +153,12 @@ int move(void *param)
 		side -= vars->move_step;
 	if (vars->keys.d)
 		side += vars->move_step;
-	/* apply rotation keys if desired (left/right) */
-	if ( (!vars->keys.left || !vars->keys.right))
+	if (side != 0 && ver != 0)
+	{
+		ver = ver / sqrt(2.0);
+		side = side / sqrt(2.0);
+	}
+	if ( (!vars->keys.left || !vars->keys.right) && (vars->keys.left || vars->keys.right) )
 	{
 		if (vars->keys.left)
 			rotate(vars, -3);
@@ -153,11 +177,41 @@ int move(void *param)
 	double delta_x = dx_f + dx_s;
 	double delta_y = dy_f + dy_s;
 
-	if (validate_move(vars, delta_y, delta_x) == 0)
+	if (validate_move(vars, &delta_y, &delta_x) == 0)
 	{
 		vars->player->y += delta_y;
 		vars->player->x += delta_x;
 	}
-	draw_field_of_view(vars);
+	if (ver != 0 || side != 0)
+		draw_field_of_view(vars);
+	return (0);
+}
+int dir_e_move(t_vars *vars, int ver, int side)
+{
+	t_movecalc move;
+	if ( (!vars->keys.left || !vars->keys.right) && (vars->keys.left || vars->keys.right) )
+	{
+		if (vars->keys.left)
+			rotate(vars, -3);
+		if (vars->keys.right)
+			rotate(vars, 3);
+		if (ver == 0 && side == 0)
+			draw_field_of_view(vars);
+		if (ver == 0 && side == 0)
+			return (0);
+	}
+	move.rad = (vars->player->dir * M_PI) / 180.0;
+	move.dy_f = -sin(move.rad) * (double)ver;
+	move.dy_s =  cos(move.rad) * (double)side;
+	move.delta_x = -cos(move.rad) * (double)ver + -sin(move.rad) * (double)side;
+	move.delta_y = move.dy_f + move.dy_s;
+
+	if (validate_move(vars, &move.delta_y, &move.delta_x) == 0)
+	{
+		vars->player->y += move.delta_y;
+		vars->player->x += move.delta_x;
+	}
+	if (ver != 0 || side != 0)
+		draw_field_of_view(vars);
 	return (0);
 }

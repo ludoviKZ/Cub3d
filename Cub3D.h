@@ -106,6 +106,29 @@ typedef struct s_vars
 	int     move_step;  /* pixels moved per step */
 	int     cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
 }	t_vars;
+typedef struct s_moveval
+{	
+	double new_x;
+	double new_y;
+	int rows;
+	int cell_row;
+	int cell_col;
+	int cell_row2;
+	int cell_col2;
+	int cell_row3;
+	int cell_col3;
+}	t_moveval;
+
+typedef struct s_movecalc
+{
+	double	rad;
+	double	dx_f;
+	double	dy_f;
+	double	dx_s;
+	double	dy_s;
+	double	delta_x;
+	double	delta_y;
+}	t_movecalc;
 
 typedef struct s_raycast
 {
@@ -159,12 +182,14 @@ int		init_player(t_vars *vars);
 int		move(void *param);
 void	rotate(t_vars *vars, int angle);
 void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness);
-int validate_move(t_vars *vars, double ver, double side);
+int validate_move(t_vars *vars, double *ver, double *side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
 void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index);
 void line2D_vars_init(t_line2D *line, int x1, int y1, int x2, int y2, int thickness);
+int  check_for_close_walls(t_vars *vars, t_moveval move);
+
 
 /* Raycast helper functions (refactor targets) */
 void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);
