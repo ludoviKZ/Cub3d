@@ -51,7 +51,8 @@ void draw_field_of_view(t_vars *vars)
 
 	if (!vars || !vars->player || !vars->map)
 		return;
-
+	printf("Drawing field of view for player at (%.2f, %.2f) facing %d degrees\n",
+		vars->player->x, vars->player->y, vars->player->dir);
 	r.fov_angle = 60;
 	r.num_rays = MAP_WIDTH;
 	r.max_length = 400;
