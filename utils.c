@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/18 17:57:02 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/25 17:54:33 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,33 @@ char	**dup_matrix(char **map, t_parsing *p)
 	return (new_map[i] = NULL, mat_free(p->map), new_map);
 }
 
+int	isnum(char **str)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (str[i])
+	{
+		j = 0;
+		while (str[i][j] != '\0')
+		{
+			if (str[i][j] < '0' || str[i][j] > '9')
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	return (1);
+}
+
 int	rgb_to_color(char **rgb)
 {
 	int	r;
 	int	g;
 	int	b;
 
-	if (!rgb || !rgb[0] || !rgb[1] || !rgb[2])
+	if ((!rgb || !rgb[0] || !rgb[1] || !rgb[2]) || !isnum(rgb))
 		return (-1);
 	r = ft_atoi(rgb[0]);
 	g = ft_atoi(rgb[1]);

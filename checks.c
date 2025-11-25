@@ -6,11 +6,24 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/14 17:57:42 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/11/25 19:16:15 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
+
+/* Return 1 if `s` ends with ".xpm" (case-sensitive), 0 otherwise. */
+static int	has_xpm_ext(const char *s)
+{
+	size_t len;
+
+	if (!s)
+		return (0);
+	len = ft_strlen(s);
+	if (len < 4)
+		return (0);
+	return (ft_strncmp(s + len - 4, ".xpm", 4) == 0);
+}
 
 int	skip_spaces(char *line, int *index)
 {
@@ -140,6 +153,7 @@ int	syntax_check_rgb(t_parsing *parsing, char **textures)
 	return (0);
 }
 
+
 int	syntax_check(t_parsing *parsing, char **textures)
 {
 	int		i;
@@ -154,7 +168,7 @@ int	syntax_check(t_parsing *parsing, char **textures)
 		if (i < 4)
 		{
 			trimmed = ft_strtrim(textures[i], " \t\n");
-			if (!trimmed)
+			if (!trimmed || !has_xpm_ext(trimmed))
 				return (-1);
 			fd = open(trimmed, O_RDONLY);
 			if (fd == -1)

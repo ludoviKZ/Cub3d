@@ -64,7 +64,7 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 
 	/* Determine which texture to use based on hit side and ray direction.
 	   tex indices: 0=NO,1=SO,2=WE,3=EA (matches parser order). */
-	int tex_index;
+	int		tex_index;
 	if (r->side == 0)
 	{
 		if (r->rayDirX > 0)

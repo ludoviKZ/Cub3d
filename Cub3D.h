@@ -19,6 +19,17 @@
 #define FLOOR_COLOR   0x444444 
 /* Size of one map cell in pixels. Reduce this to make the perceived map
 	translation (movement and map scaling) smaller. */
+
+	/*
+	1111111111111111111
+	11000000000000E0000
+	1000000100000100001
+	1000001110001101001
+	1000000100000011001
+	100000111000000001
+	1111111  11111111
+	1     111111111111
+	111111111111111111	*/
 #define CELL_SIZE 90
 
 typedef struct s_player
@@ -39,6 +50,7 @@ typedef struct s_parsing {
 }	t_parsing;
 
 typedef struct s_texture {
+	int		tex_i[4];
 	void	*img[4];
 	int		width;
 	int		height;
@@ -50,6 +62,11 @@ typedef struct s_texture {
 	int	 	col_bpp;
 	int	 	col_line_len;
 	int	 	col_endian;
+	char	*dst;
+	int		top;
+	int		bottom;
+	int		draw_top;
+	int		draw_bottom;
 }	t_texture;
 
 typedef struct s_line2D

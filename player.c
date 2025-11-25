@@ -22,6 +22,11 @@ int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
 		return (-1);
 	texture->height = tex_h;
 	texture->width = tex_w;
+	texture->dst = NULL;
+	texture->top = 0;
+	texture->bottom = 0;
+	texture->draw_top = 0;
+	texture->draw_bottom = 0;
 	return (0);
 }
 
