@@ -174,7 +174,6 @@ void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex
 int rgb_to_color(char **rgb);
 //void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
-
 // Ludo
 int		draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr);
 void	draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color);
