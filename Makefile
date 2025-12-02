@@ -15,6 +15,7 @@ RM = rm -f
 	@$(CC) $(CFLAGS) -Imlx -c -o $@ $<
 
 all: adittionallibs $(NAME)
+	clear
 
 adittionallibs:
 	@make -C $(MLX_PATH) all

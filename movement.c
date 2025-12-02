@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 17:51:06 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/30 18:30:09 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/02 17:03:58 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <math.h>
 #include "Cub3D.h"
 
 void rotate(t_vars *vars, int angle)                                                                              
@@ -146,7 +145,7 @@ int dir_e_move(t_vars *vars, int ver, int side)
 	}
 	move.rad = (vars->player->dir * M_PI) / 180.0;
 	move.delta_x = -cos(move.rad) * (double)ver + -sin(move.rad) * (double)side;
-	move.delta_y = -sin(move.rad) * (double)ver; + cos(move.rad) * (double)side;
+	// move.delta_y = -sin(move.rad) * (double)ver; + cos(move.rad) * (double)side;
 
 	if (validate_move(vars, &move.delta_y, &move.delta_x) == 0)
 	{

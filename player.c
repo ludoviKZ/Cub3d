@@ -1,4 +1,3 @@
-#include <math.h>
 #include "Cub3D.h"
 
 int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
