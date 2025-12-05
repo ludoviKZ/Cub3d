@@ -48,8 +48,6 @@ int	init_player(t_vars *vars)
 		return (free(vars->player), free(vars->texture), -1);
 	vars->player->x = x;
 	vars->player->y = y;
-	/* Initialize player direction from parsing->pl_dir if available. Map
-	   compass directions to degrees (0 = East, 90 = North). */
 	if (vars->parsing && vars->parsing->pl_dir)
 	{
 		if (vars->parsing->pl_dir == 'N')
@@ -68,4 +66,17 @@ int	init_player(t_vars *vars)
 	vars->wall_scale = WALL_SCALE;
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
+}
+void set_player_dir(t_vars *vars, char dir)
+{
+	if (dir == 'N')
+		vars->player->dir = 90;
+	else if (dir == 'S')
+		vars->player->dir = 270;
+	else if (dir == 'E')
+		vars->player->dir = 0;
+	else if (dir == 'W')
+		vars->player->dir = 180;
+	else
+		vars->player->dir = 0;
 }
