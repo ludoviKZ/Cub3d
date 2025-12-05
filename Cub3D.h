@@ -67,6 +67,7 @@ typedef struct s_texture {
 	int		bottom;
 	int		draw_top;
 	int		draw_bottom;
+	int		tex_index;
 }	t_texture;
 
 typedef struct s_line2D
@@ -165,12 +166,12 @@ typedef struct s_raycast
 
 // Kris
 int parsing(t_parsing *parsing, char *map_file);
-int parsing_init(t_parsing *parsing);
+void cleanup(t_vars *vars);
 int line_count(char *map_file);
 int mat_free(char **matrix);
 int check_textures(t_parsing *p);
 char **dup_matrix(char **map, t_parsing *p);
-void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index);
+void draw_texture(t_vars *vars, int ray, int slice_height, double wallX);
 int rgb_to_color(char **rgb);
 //void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
@@ -185,7 +186,7 @@ int validate_move(t_vars *vars, double *ver, double *side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 int dir_e_move(t_vars *vars, int ver, int side);
-void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index);
+void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX);
 void set_player_dir(t_vars *vars, char dir);
 int  check_for_close_walls(t_vars *vars, t_moveval move);
 

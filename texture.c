@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/25 16:35:51 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/05 17:34:13 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	helper_draw(t_vars *vars, int slice_height)
 	col_img = mlx_new_image(vars->mlx, 1, MAP_HEIGHT);
 }
 
-void	draw(t_vars *v, int slice_height, double wallX)
+void	draw(t_vars *v, double slice_height, double wallX)
 {
 	int		i;
 	double	tex_yf;
@@ -75,7 +75,7 @@ void	draw(t_vars *v, int slice_height, double wallX)
 	while (i <= v->texture->draw_bottom)
 	{
 		if (slice_height > 1)
-			tex_yf = ((double)(i - v->texture->top) / (double)(slice_height - 1))
+			tex_yf = ((double)(i - v->texture->top) / (slice_height - 1))
 				* (double)(v->texture->height - 1);
 		else
 			tex_yf = 0.0;
@@ -125,11 +125,11 @@ void	draw_wall(t_vars *vars, int screen_x, int slice_height, double wallX)
 	return ;
 }
 
-void	draw_texture(t_vars *vars, int ray, int sh, double wallX, int tex_index)
+void	draw_texture(t_vars *v, int ray, int sh, double wallX)
 {
-	vars->texture->addr = mlx_get_data_addr(vars->texture->img[tex_index],
-			&vars->texture->bits_per_pixel,
-			&vars->texture->line_length,
-			&vars->texture->endian);
-	draw_wall(vars, ray, sh, wallX);
+	v->texture->addr = mlx_get_data_addr(v->texture->img[v->texture->tex_index],
+			&v->texture->bits_per_pixel,
+			&v->texture->line_length,
+			&v->texture->endian);
+	draw_wall(v, ray, sh, wallX);
 }

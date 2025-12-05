@@ -64,25 +64,24 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 
 	/* Determine which texture to use based on hit side and ray direction.
 	   tex indices: 0=NO,1=SO,2=WE,3=EA (matches parser order). */
-	int		tex_index;
 	if (r->side == 0)
 	{
 		if (r->rayDirX > 0)
-			tex_index = 2; /* WE */
+			vars->texture->tex_index = 2; /* WE */
 		else
-			tex_index = 3; /* EA */
+			vars->texture->tex_index = 3; /* EA */
 	}
 	else
 	{
 		if (r->rayDirY > 0)
-			tex_index = 1; /* SO */
+			vars->texture->tex_index = 1; /* SO */
 		else
-			tex_index = 0; /* NO */
+			vars->texture->tex_index = 0; /* NO */
 	}
 
-	if (tex_index == 1 || tex_index == 3)
+	if (vars->texture->tex_index == 1 || vars->texture->tex_index == 3)
 		wallX = 1.0 - wallX; /* Flip for SO and EA walls */
-	draw_3D_wall_slice(vars, r->ray_index, hit_px, hit_py, r->perpWallDist, r->ray_angle, wallX, tex_index);
+	draw_3D_wall_slice(vars, r->ray_index, hit_px, hit_py, r->perpWallDist, r->ray_angle, wallX);
 }
 
 void setup_dda_extra(t_vars *vars, t_raycast *r)

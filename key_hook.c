@@ -3,14 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   key_hook.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 16:34:03 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/05 16:35:04 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/05 16:56:21 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
+
+int	close_window(t_vars *vars)
+{
+	if (vars->texture->img[0])
+	{
+		mlx_destroy_image(vars->mlx, vars->texture->img[0]);
+		mlx_destroy_image(vars->mlx, vars->texture->img[1]);
+		mlx_destroy_image(vars->mlx, vars->texture->img[2]);
+		mlx_destroy_image(vars->mlx, vars->texture->img[3]);
+	}
+	mlx_destroy_window(vars->mlx, vars->win);
+	mlx_destroy_display(vars->mlx);
+	free(vars->mlx);
+	cleanup(vars);
+	exit(EXIT_SUCCESS);
+	return (0);
+}
 
 int key_hook(int keycode, t_vars *vars)
 {
