@@ -190,6 +190,7 @@ void set_player_dir(t_vars *vars, char dir);
 int  check_for_close_walls(t_vars *vars, t_moveval move);
 
 
+
 /* Raycast helper functions (refactor targets) */
 void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);
 void    setup_dda(t_vars *vars, t_raycast *r);
@@ -198,5 +199,9 @@ void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
 double  compute_delta_dist(double rayDir);
 int	 slice_height_calc(t_vars *vars, double perpWallDist);
 int validate_move_cell(t_vars *vars, double x, double y);
+void setup_dda_extra(t_vars *vars, t_raycast *r);
+void setup_dda_extra_extra(t_raycast *r);
+double safe_denominator(double v);
+void compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX);
 
 #endif

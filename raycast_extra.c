@@ -1,8 +1,5 @@
 #include "Cub3D.h"
 
-void setup_dda_extra(t_vars *vars, t_raycast *r);
-static void setup_dda_extra_extra(t_raycast *r);
-static double safe_denominator(double v);
 /* Compute absolute delta distance for a ray direction axis without using
    the conditional operator. Variables declared first then assigned. */
 double compute_delta_dist(double rayDir)
@@ -16,73 +13,11 @@ double compute_delta_dist(double rayDir)
 	return (res);
 }
 
-/* Return a non-zero denominator for division. If v is 0, return a
-   small epsilon to avoid division by zero. Uses an if-statement to
-   comply with the subject restriction against the conditional operator. */
-static double safe_denominator(double v)
+double safe_denominator(double v)
 {
 	if (v == 0.0)
 		return 1e-6;
 	return v;
-}
-
-/* Compute perpendicular distance and hit pixel coordinates, then render
-   the wall slice. Declared variables first, then assigned. */
-void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
-{
-	double  perpWallDist;
-	double  wallDistPixels;
-	int	 hit_px;
-	int	 hit_py;
-
-	if (r->hit)
-	{
-		if (r->side == 0)
-			perpWallDist = (r->mapX - r->posX + (1 - r->stepX) / 2.0) / safe_denominator(r->rayDirX);
-		else
-			perpWallDist = (r->mapY - r->posY + (1 - r->stepY) / 2.0) / safe_denominator(r->rayDirY);
-	}
-	else
-		perpWallDist = (double)r->max_length / (double)vars->cell_size;
-	r->perpWallDist = perpWallDist;
-	wallDistPixels = perpWallDist * (double)vars->cell_size;
-	r->wallDistPixels = wallDistPixels;
-	hit_px = r->px + (int)round(r->rayDirX * wallDistPixels);
-	hit_py = r->py + (int)round(r->rayDirY * wallDistPixels);
-	r->hit_px = hit_px;
-	r->hit_py = hit_py;
-
-	/* Compute wallX: fractional coordinate on the wall (0..1). Use the
-	   perpendicular distance and ray direction to compute the exact hit
-	   position in map coordinates, then take the fractional part. */
-	double wallX;
-	if (r->side == 0)
-		wallX = r->posY + perpWallDist * r->rayDirY;
-	else
-		wallX = r->posX + perpWallDist * r->rayDirX;
-	wallX -= floor(wallX);
-
-	/* Determine which texture to use based on hit side and ray direction.
-	   tex indices: 0=NO,1=SO,2=WE,3=EA (matches parser order). */
-	int		tex_index;
-	if (r->side == 0)
-	{
-		if (r->rayDirX > 0)
-			tex_index = 2; /* WE */
-		else
-			tex_index = 3; /* EA */
-	}
-	else
-	{
-		if (r->rayDirY > 0)
-			tex_index = 1; /* SO */
-		else
-			tex_index = 0; /* NO */
-	}
-
-	if (tex_index == 1 || tex_index == 3)
-		wallX = 1.0 - wallX; /* Flip for SO and EA walls */
-	draw_3D_wall_slice(vars, r->ray_index, hit_px, hit_py, r->perpWallDist, r->ray_angle, wallX, tex_index);
 }
 
 void setup_dda_extra(t_vars *vars, t_raycast *r)
@@ -114,7 +49,7 @@ void setup_dda_extra(t_vars *vars, t_raycast *r)
 	}
 }
 
-static void setup_dda_extra_extra(t_raycast *r)
+void setup_dda_extra_extra(t_raycast *r)
 {
 	r->hit = 0;
 	r->side = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/02 18:14:17 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/05 17:32:02 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,30 +25,6 @@ int	mat_free(char **matrix)
 		i++;
 	}
 	free(matrix);
-	return (0);
-}
-
-int	dup_map(t_parsing *p, char *map_file)
-{
-	int	fd;
-	int	i;
-
-	fd = open(map_file, O_RDONLY);
-	if (fd == -1)
-		return (printf("Error"), -1);
-	p->map = malloc(sizeof(char *) * (p->map_h + 1));
-	if (!p->map)
-	{
-		printf("Memory allocation failed");
-		close(fd);
-		return (-1);
-	}
-	p->map[0] = get_next_line(fd);
-	i = 0;
-	while (p->map[i])
-		p->map[++i] = get_next_line(fd);
-	p->map[i] = NULL;
-	close(fd);
 	return (0);
 }
 
