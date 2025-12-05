@@ -18,17 +18,14 @@ int slice_height_calc(t_vars *vars, double perpWallDist)
 		corrected_dist_pixels = 1.0;
 	return (int)((MAP_HEIGHT * vars->wall_scale) / corrected_dist_pixels);
 }
-void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX)
+void draw_3D_wall_slice(t_vars *vars, t_raycast *r, double wallX)
 {
 	int slice_height;
 	int top;
 	int bottom;
 	int wall_color;
-	(void)px;
-	(void)py;
-	(void)ray_angle;
 
-	slice_height = slice_height_calc(vars, perpWallDist);
+	slice_height = slice_height_calc(vars, r->perpwalldist);
 	/* Keep the calculated slice_height even if it's larger than the screen.
 	   We'll only draw the visible rows — do not scale the wall to fit. */
 	if (slice_height < 1)
@@ -46,7 +43,7 @@ void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDi
 	// mlx_put_image_to_window(vars->mlx, vars->win, vars->background, ray, 0);
 	wall_color = 0x808080;
 	if (bottom >= top)
-		draw_texture(vars, ray, slice_height, wallX);
+		draw_texture(vars, r->ray_index, slice_height, wallX);
 
 	/* floor is handled by the single draw_background call above */
 	return;
