@@ -76,26 +76,25 @@ void draw_field_of_view(t_vars *vars)
 void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 {
 	double wallX;
-	int		tex_index;
 
 	compute_vars_setup(vars, r, &wallX);
 	if (r->side == 0)
 	{
 		if (r->rayDirX > 0)
-			tex_index = 2; /* WE */
+			vars->texture->tex_index = 2; /* WE */
 		else
-			tex_index = 3; /* EA */
+			vars->texture->tex_index = 3; /* EA */
 	}
 	else
 	{
 		if (r->rayDirY > 0)
-			tex_index = 1; /* SO */
+			vars->texture->tex_index = 1; /* SO */
 		else
-			tex_index = 0; /* NO */
+			vars->texture->tex_index = 0; /* NO */
 	}
-	if (tex_index == 1 || tex_index == 3)
+	if (vars->texture->tex_index == 1 || vars->texture->tex_index == 3)
 		wallX = 1.0 - wallX; /* Flip for SO and EA walls */
-	draw_3D_wall_slice(vars, r->ray_index, r->hit_px, r->hit_py, r->perpWallDist, r->ray_angle, wallX, tex_index);
+	draw_3D_wall_slice(vars, r->ray_index, r->hit_px, r->hit_py, r->perpWallDist, r->ray_angle, wallX);
 }
 
 void compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX)

@@ -1,32 +1,32 @@
 #include "Cub3D.h"
 
-int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
+int init_texture(t_vars *vars, t_texture *t, t_parsing *p)
 {
 	int tex_w;
 	int tex_h;
 
 	tex_w = 64;
 	tex_h = 64;
-	texture->img[0] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[0], &tex_w, &tex_h);
-	if (!texture->img[0])
+	t->img[0] = mlx_xpm_file_to_image(vars->mlx, p->textures[0], &tex_w, &tex_h);
+	if (!t->img[0])
 		return (-1);
-	texture->img[1] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[1], &tex_w, &tex_h);
-	if (!texture->img[1])
+	t->img[1] = mlx_xpm_file_to_image(vars->mlx, p->textures[1], &tex_w, &tex_h);
+	if (!t->img[1])
 		return (-1);
-	texture->img[2] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[2], &tex_w, &tex_h);
-	if (!texture->img[2])
+	t->img[2] = mlx_xpm_file_to_image(vars->mlx, p->textures[2], &tex_w, &tex_h);
+	if (!t->img[2])
 		return (-1);
-	texture->img[3] = mlx_xpm_file_to_image(vars->mlx, parsing->textures[3], &tex_w, &tex_h);
-	if (!texture->img[3])
+	t->img[3] = mlx_xpm_file_to_image(vars->mlx, p->textures[3], &tex_w, &tex_h);
+	if (!t->img[3])
 		return (-1);
-	texture->height = tex_h;
-	texture->width = tex_w;
-	texture->dst = NULL;
-	texture->top = 0;
-	texture->bottom = 0;
-	texture->draw_top = 0;
-	texture->draw_bottom = 0;
-	return (0);
+	t->height = tex_h;
+	t->width = tex_w;
+	t->dst = NULL;
+	t->top = 0;
+	t->bottom = 0;
+	t->draw_top = 0;
+	t->draw_bottom = 0;
+	return (t->tex_index = 0, 0);
 }
 
 int	init_player(t_vars *vars)
@@ -50,6 +50,11 @@ int	init_player(t_vars *vars)
 	set_player_dir(vars, vars->parsing->pl_dir);
 	vars->wall_scale = WALL_SCALE;
 	draw_field_of_view(vars); // draw 3D projection across the screen
+	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
+	mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
+	mlx_loop_hook(vars->mlx, move, vars);
+	mlx_hook(vars->win, 17, 0, close_window, vars);    /* DestroyNotify */
+	mlx_loop(vars->mlx);
 	return (0);
 }
 void set_player_dir(t_vars *vars, char dir)

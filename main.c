@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/05 16:34:24 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/05 17:16:20 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-void cleanup(t_vars *g_vars)
+void	cleanup(t_vars *g_vars)
 {
 	if (!g_vars)
 		return ;
@@ -34,111 +34,85 @@ void cleanup(t_vars *g_vars)
 	g_vars = NULL;
 }
 
-int parsing_init(t_parsing *parsing)
+t_parsing	*parsing_init(void)
 {
-	int i;
+	t_parsing	*p;
+	int			i;
 
-	parsing->map = NULL;
-	parsing->map_h = 0;
-	parsing->pl_x = -1;
-	parsing->pl_y = -1;
-	parsing->pl_dir = '\0';
-	parsing->textures = malloc(sizeof(char *) * 7);
-	if (!parsing->textures)
-	{
-		printf("Error\n");
-		return (-1);
-	}
-	/* initialize texture pointers to NULL to avoid reading uninitialized memory */
+	p = malloc(sizeof(t_parsing));
+	if (!p)
+		return (NULL);
+	p->map = NULL;
+	p->map_h = 0;
+	p->pl_x = -1;
+	p->pl_y = -1;
+	p->pl_dir = '\0';
+	p->textures = malloc(sizeof(char *) * 7);
+	if (!p->textures)
+		return (printf("Error\nMalloc failed\n"), free(p), NULL);
 	i = 0;
 	while (i < 7)
-		parsing->textures[i++] = NULL;
-	parsing->colors = malloc(sizeof(int) * 2);
-	if (!parsing->colors)
-	{
-		mat_free(parsing->textures);
-		printf("Error\n");
-		return (-1);
-	}
-	parsing->colors[0] = -1;
-	parsing->colors[1] = -1;
-	return (0);
+		p->textures[i++] = NULL;
+	p->colors = malloc(sizeof(int) * 2);
+	if (!p->colors)
+		return (mat_free(p->textures), printf("Error\nMalloc failed\n"), NULL);
+	p->colors[0] = -1;
+	p->colors[1] = -1;
+	return (p);
 }
 
-int	close_window(t_vars *vars)
+t_vars	*init_vars(t_parsing *p)
 {
-	if (vars->texture->img[0])
-	{
-		mlx_destroy_image(vars->mlx, vars->texture->img[0]);
-		mlx_destroy_image(vars->mlx, vars->texture->img[1]);
-		mlx_destroy_image(vars->mlx, vars->texture->img[2]);
-		mlx_destroy_image(vars->mlx, vars->texture->img[3]);
-	}
-	mlx_destroy_window(vars->mlx, vars->win);
-	mlx_destroy_display(vars->mlx);
-	free(vars->mlx);
-	cleanup(vars);
-	exit(EXIT_SUCCESS);
-	return (0);
-}
+	t_vars	*vars;
 
-int main(int argc, char **argv)
-{
-	t_vars *vars;
-	t_parsing *p;
-
-	if (argc != 2)
-		return (printf("Usage: %s <map_file>\n", argv[0]), 1);
-   	p = malloc(sizeof(t_parsing));
-	if (!p)
-	{
-		printf("Memory allocation failed");
-		return (1);
-	}
-	parsing_init(p);
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
-	{
-		mat_free(p->textures);
-		if (p->colors)
-			free(p->colors);
-		free(p);
-		printf("Memory allocation failed");
-		return (1);
-	}
-	vars->parsing = p;
+		return (free(p->colors), mat_free(p->textures), free(p), NULL);
 	vars->mlx = NULL;
 	vars->win = NULL;
+	vars->map = NULL;
 	vars->background = NULL;
 	vars->fd = -1;
+	vars->parsing = NULL;
 	vars->player = NULL;
 	vars->texture = NULL;
-	vars->keys = (t_keys){0, 0, 0, 0, 0, 0};
+	vars->keys.w = 0;
+	vars->keys.a = 0;
+	vars->keys.s = 0;
+	vars->keys.d = 0;
+	vars->keys.left = 0;
+	vars->keys.right = 0;
 	vars->wall_scale = WALL_SCALE;
 	vars->move_step = 10;
 	vars->cell_size = CELL_SIZE;
+	return (vars);
+}
+
+int	main(int argc, char **argv)
+{
+	t_vars		*vars;
+	t_parsing	*p;
+
+	if (argc != 2)
+		return (printf("Usage: %s <map_file>\n", argv[0]), 1);
+	p = parsing_init();
+	if (!p)
+		return (1);
+	vars = init_vars(p);
+	if (!vars)
+		return (printf("Error\nMemory allocation failed\n"), 1);
 	if (parsing(p, argv[1]) < 0)
 	{
-		printf("Parsing failed\n");
 		if (p->map)
 			mat_free(p->map);
-		mat_free(p->textures);
 		if (p->colors)
 			free(p->colors);
-		free(vars);
-		free(p);
-		return (1);
+		printf("Error\nParsing failed\n");
+		return (mat_free(p->textures), free(vars), free(p), 1);
 	}
 	vars->mlx = mlx_init();
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
-	printf("Map loaded successfully. Initializing player...\n");
 	vars->map = p->map;
 	vars->parsing = p;
-	init_player(vars);
-	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
-	mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */
-	mlx_loop_hook(vars->mlx, move, vars);
-	mlx_hook(vars->win, 17, 0, close_window, vars);    /* DestroyNotify */
-	mlx_loop(vars->mlx);
-	return (0);
+	return (init_player(vars), 0);
 }

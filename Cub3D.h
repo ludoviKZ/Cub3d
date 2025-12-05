@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Cub3D.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
+/*   Updated: 2025/12/05 17:44:07 by lzorzit          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
@@ -11,12 +22,13 @@
 # include "libft/libft.h"
 # include "minilibx/mlx.h"
 
-#define MAP_WIDTH 1024
-#define MAP_HEIGHT 512
+# define MAP_WIDTH 1024
+# define MAP_HEIGHT 512
 # define M_PI 3.14159265358979323846
-#define WALL_SCALE 100
-#define CEILING_COLOR 0x87CEEB 
-#define FLOOR_COLOR   0x444444 
+# define WALL_SCALE 100
+# define CEILING_COLOR 0x87CEEB 
+# define FLOOR_COLOR   0x444444 
+# define CELL_SIZE 90
 /* Size of one map cell in pixels. Reduce this to make the perceived map
 	translation (movement and map scaling) smaller. */
 
@@ -30,26 +42,27 @@
 	1111111  11111111
 	1     111111111111
 	111111111111111111	*/
-#define CELL_SIZE 90
 
 typedef struct s_player
 {
-	double  x;
-	double  y;
-	int	dir;
+	double	x;
+	double	y;
+	int		dir;
 }	t_player;
 
-typedef struct s_parsing {
+typedef struct s_parsing
+{
 	char	**map;
 	char	**textures;
 	int		map_h;
-	int     pl_x;
-	int     pl_y;
-	char    pl_dir;
-	int     *colors;
+	int		pl_x;
+	int		pl_y;
+	char	pl_dir;
+	int		*colors;
 }	t_parsing;
 
-typedef struct s_texture {
+typedef struct s_texture
+{
 	int		tex_i[4];
 	void	*img[4];
 	int		width;
@@ -59,25 +72,26 @@ typedef struct s_texture {
 	int		line_length;
 	int		endian;
 	char	*col_addr;
-	int	 	col_bpp;
-	int	 	col_line_len;
-	int	 	col_endian;
+	int		col_bpp;
+	int		col_line_len;
+	int		col_endian;
 	char	*dst;
 	int		top;
 	int		bottom;
 	int		draw_top;
 	int		draw_bottom;
+	int		tex_index;
 }	t_texture;
 
 typedef struct s_line2D
 {
-	int dx;
-	int dy;
-	int sx;
-	int sy;
-	int err;
-	int start;
-	int end;
+	int	dx;
+	int	dy;
+	int	sx;
+	int	sy;
+	int	err;
+	int	start;
+	int	end;
 }	t_line2D;
 
 typedef struct s_keys
@@ -92,31 +106,32 @@ typedef struct s_keys
 
 typedef struct s_vars
 {
-	void	*mlx;
-	void	*win;
-	char	**map;
-	void	*background;
-	int		fd;
-	t_parsing    *parsing;
+	void		*mlx;
+	void		*win;
+	char		**map;
+	void		*background;
+	int			fd;
+	t_parsing	*parsing;
 	t_player	*player;
 	t_texture	*texture;
 	t_keys		keys;
 	/* Runtime adjustable parameters */
-	double  wall_scale; /* current wall scale (initialized from WALL_SCALE) */
-	int     move_step;  /* pixels moved per step */
-	int     cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
+	double 		wall_scale; /* current wall scale (initialized from WALL_SCALE) */
+	int			move_step;  /* pixels moved per step */
+	int			cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
 }	t_vars;
+
 typedef struct s_moveval
 {	
-	double new_x;
-	double new_y;
-	int rows;
-	int cell_row;
-	int cell_col;
-	int cell_row2;
-	int cell_col2;
-	int cell_row3;
-	int cell_col3;
+	double		new_x;
+	double		new_y;
+	int			rows;
+	int			cell_row;
+	int			cell_col;
+	int			cell_row2;
+	int			cell_col2;
+	int			cell_row3;
+	int			cell_col3;
 }	t_moveval;
 
 typedef struct s_movecalc
@@ -132,46 +147,46 @@ typedef struct s_movecalc
 
 typedef struct s_raycast
 {
-	int     fov_angle;
-	int     num_rays;
-	int     max_length;
-	double  start_angle;
-	double  angle_step;
-	int     px;
-	int     py;
-	int     ray_index;
-	double  ray_angle;
-	double  rad;
-	double  rayDirX;
-	double  rayDirY;
-	double  posX;
-	double  posY;
-	int     mapX;
-	int     mapY;
-	double  deltaDistX;
-	double  deltaDistY;
-	double  sideDistX;
-	double  sideDistY;
-	int     stepX;
-	int     stepY;
-	int     hit;
-	int     side;
-	double  perpWallDist;
-	double  wallDistPixels;
-	int     hit_px;
-	int     hit_py;
-	int     map_rows;
-}   t_raycast;
+	int		fov_angle;
+	int		num_rays;
+	int		max_length;
+	double	start_angle;
+	double	angle_step;
+	int		px;
+	int		py;
+	int		ray_index;
+	double	ray_angle;
+	double	rad;
+	double	rayDirX;
+	double	rayDirY;
+	double	posX;
+	double	posY;
+	int		mapX;
+	int		mapY;
+	double	deltaDistX;
+	double	deltaDistY;
+	double	sideDistX;
+	double	sideDistY;
+	int		stepX;
+	int		stepY;
+	int		hit;
+	int		side;
+	double	perpWallDist;
+	double	wallDistPixels;
+	int		hit_px;
+	int		hit_py;
+	int		map_rows;
+}	t_raycast;
 
 // Kris
-int parsing(t_parsing *parsing, char *map_file);
-int parsing_init(t_parsing *parsing);
-int line_count(char *map_file);
-int mat_free(char **matrix);
-int check_textures(t_parsing *p);
-char **dup_matrix(char **map, t_parsing *p);
-void draw_texture(t_vars *vars, int ray, int slice_height, double wallX, int tex_index);
-int rgb_to_color(char **rgb);
+int		parsing(t_parsing *parsing, char *map_file);
+void	cleanup(t_vars *vars);
+int		line_count(char *map_file);
+int		mat_free(char **matrix);
+int		check_textures(t_parsing *p);
+char	**dup_matrix(char **map, t_parsing *p);
+void	draw_texture(t_vars *vars, int ray, int slice_height, double wallX);
+int		rgb_to_color(char **rgb);
 //void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
 // Ludo
@@ -181,14 +196,13 @@ int		key_release(int keycode, t_vars *vars);
 int		close_window(t_vars *vars);
 int		move(void *param);
 void	rotate(t_vars *vars, int angle);
-int validate_move(t_vars *vars, double *ver, double *side);
-void draw_field_of_view(t_vars *vars);
-void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
-int dir_e_move(t_vars *vars, int ver, int side);
-void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index);
-void set_player_dir(t_vars *vars, char dir);
-int  check_for_close_walls(t_vars *vars, t_moveval move);
-
+int		validate_move(t_vars *vars, double *ver, double *side);
+void	draw_field_of_view(t_vars *vars);
+void	check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
+int		dir_e_move(t_vars *vars, int ver, int side);
+void	draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX);
+void	set_player_dir(t_vars *vars, char dir);
+int		check_for_close_walls(t_vars *vars, t_moveval move);
 
 
 /* Raycast helper functions (refactor targets) */
@@ -197,11 +211,11 @@ void    setup_dda(t_vars *vars, t_raycast *r);
 void    setup_dda_extra(t_vars *vars, t_raycast *r);
 void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
 double  compute_delta_dist(double rayDir);
-int	 slice_height_calc(t_vars *vars, double perpWallDist);
-int validate_move_cell(t_vars *vars, double x, double y);
-void setup_dda_extra(t_vars *vars, t_raycast *r);
-void setup_dda_extra_extra(t_raycast *r);
-double safe_denominator(double v);
-void compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX);
+int		slice_height_calc(t_vars *vars, double perpWallDist);
+int		validate_move_cell(t_vars *vars, double x, double y);
+void	setup_dda_extra(t_vars *vars, t_raycast *r);
+void	setup_dda_extra_extra(t_raycast *r);
+double	safe_denominator(double v);
+void	compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX);
 
 #endif
