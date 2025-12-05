@@ -175,19 +175,18 @@ int rgb_to_color(char **rgb);
 //void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
 // Ludo
-int		draw_square2D(char **map, int size[], void *mlx_ptr, void *win_ptr);
-void	draw_square(void *mlx_ptr, void *win_ptr, int x0, int y0, int size, int color);
 int		init_player(t_vars *vars);
+int		key_hook(int keycode, t_vars *vars);
+int		key_release(int keycode, t_vars *vars);
+int		close_window(t_vars *vars);
 int		move(void *param);
 void	rotate(t_vars *vars, int angle);
-void draw_line2D(void *mlx_ptr, void *win_ptr, int x1, int y1, int x2, int y2, int color, int thickness);
 int validate_move(t_vars *vars, double *ver, double *side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
-void	redraw_scene(t_vars *vars);
 int dir_e_move(t_vars *vars, int ver, int side);
 void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index);
-void line2D_vars_init(t_line2D *line, int x1, int y1, int x2, int y2, int thickness);
+void set_player_dir(t_vars *vars, char dir);
 int  check_for_close_walls(t_vars *vars, t_moveval move);
 
 

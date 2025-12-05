@@ -6,11 +6,10 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 17:51:06 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/05 15:45:05 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/05 16:14:48 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <math.h>
 #include "Cub3D.h"
 
 void rotate(t_vars *vars, int angle)                                                                              

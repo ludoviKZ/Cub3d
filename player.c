@@ -1,4 +1,3 @@
-#include <math.h>
 #include "Cub3D.h"
 
 int init_texture(t_vars *vars, t_texture *texture, t_parsing *parsing)
@@ -48,21 +47,7 @@ int	init_player(t_vars *vars)
 		return (free(vars->player), free(vars->texture), -1);
 	vars->player->x = x;
 	vars->player->y = y;
-	if (vars->parsing && vars->parsing->pl_dir)
-	{
-		if (vars->parsing->pl_dir == 'N')
-			vars->player->dir = 90;
-		else if (vars->parsing->pl_dir == 'S')
-			vars->player->dir = 270;
-		else if (vars->parsing->pl_dir == 'E')
-			vars->player->dir = 0;
-		else if (vars->parsing->pl_dir == 'W')
-			vars->player->dir = 180;
-		else
-			vars->player->dir = 0;
-	}
-	else
-		vars->player->dir = 0;
+	set_player_dir(vars, vars->parsing->pl_dir);
 	vars->wall_scale = WALL_SCALE;
 	draw_field_of_view(vars); // draw 3D projection across the screen
 	return (0);
@@ -70,13 +55,13 @@ int	init_player(t_vars *vars)
 void set_player_dir(t_vars *vars, char dir)
 {
 	if (dir == 'N')
-		vars->player->dir = 90;
-	else if (dir == 'S')
 		vars->player->dir = 270;
+	else if (dir == 'S')
+		vars->player->dir = 90;
 	else if (dir == 'E')
-		vars->player->dir = 0;
-	else if (dir == 'W')
 		vars->player->dir = 180;
+	else if (dir == 'W')
+		vars->player->dir = 0;
 	else
 		vars->player->dir = 0;
 }

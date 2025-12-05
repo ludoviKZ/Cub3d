@@ -1,4 +1,4 @@
-FILES = draw2D.c main.c player.c parsing.c utils.c checks.c raycast.c raycast_extra.c texture.c draw_slice.c movement.c
+FILES = main.c player.c parsing.c utils.c checks.c raycast.c raycast_extra.c texture.c draw_slice.c movement.c key_hook.c
 OBJ = $(FILES:.c=.o)
 NAME = Cub3D
 MLX_PATH = minilibx/
@@ -15,6 +15,7 @@ RM = rm -f
 	@$(CC) $(CFLAGS) -Imlx -c -o $@ $<
 
 all: adittionallibs $(NAME)
+	clear
 
 adittionallibs:
 	@make -C $(MLX_PATH) all

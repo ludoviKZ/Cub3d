@@ -6,20 +6,20 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/18 19:31:23 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/05 16:34:24 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include "minilibx/mlx.h"
 #include "Cub3D.h"
 
-static t_vars *g_vars = NULL;
-
-static void cleanup(void)
+void cleanup(t_vars *g_vars)
 {
 	if (!g_vars)
 		return ;
+	if (g_vars->player)
+		free(g_vars->player);
+	if (g_vars->texture)
+		free(g_vars->texture);
 	if (g_vars->parsing)
 	{
 		if (g_vars->parsing->map)
@@ -29,15 +29,6 @@ static void cleanup(void)
 		if (g_vars->parsing->colors)
 			free(g_vars->parsing->colors);
 		free(g_vars->parsing);
-		// mat_free(g_vars->parsing->textures);
-		// int i = 0;
-		// while (g_vars->texture && i < 4)
-		// {
-		// 	if (g_vars->texture->img[i])
-		// 		mlx_destroy_image(g_vars->mlx, g_vars->texture->img[i]);
-		// 	i++;
-		// }
-		// free(g_vars->texture);
 	}
 	free(g_vars);
 	g_vars = NULL;
@@ -74,51 +65,19 @@ int parsing_init(t_parsing *parsing)
 	return (0);
 }
 
-int key_hook(int keycode, t_vars *vars)
-{
-	if (!vars)
-		return (0);
-	/* Update shared keys state in vars->keys */
-	if (keycode == 'w')
-		vars->keys.w = 1;
-	else if (keycode == 'a')
-		vars->keys.a = 1;
-	else if (keycode == 's')
-		vars->keys.s = 1;
-	else if (keycode == 'd')
-		vars->keys.d = 1;
-	else if (keycode == 'i') /* Left rotation */
-		vars->keys.left = 1;
-	else if (keycode == 'o') /* Right rotation */
-		vars->keys.right = 1;
-	return (0);
-}
-
-int key_release(int keycode, t_vars *vars)
-{
-	if (!vars)
-		return (0);
-	/* Clear keys state in vars->keys */
-	if (keycode == 'w')
-		vars->keys.w = 0;
-	else if (keycode == 'a')
-		vars->keys.a = 0;
-	else if (keycode == 's')
-		vars->keys.s = 0;
-	else if (keycode == 'd')
-		vars->keys.d = 0;
-	else if (keycode == 'i') /* Left rotation */
-		vars->keys.left = 0;
-	else if (keycode == 'o') /* Right rotation */
-		vars->keys.right = 0;
-	return (0);
-}
-
 int	close_window(t_vars *vars)
 {
+	if (vars->texture->img[0])
+	{
+		mlx_destroy_image(vars->mlx, vars->texture->img[0]);
+		mlx_destroy_image(vars->mlx, vars->texture->img[1]);
+		mlx_destroy_image(vars->mlx, vars->texture->img[2]);
+		mlx_destroy_image(vars->mlx, vars->texture->img[3]);
+	}
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
-	cleanup();
+	free(vars->mlx);
+	cleanup(vars);
 	exit(EXIT_SUCCESS);
 	return (0);
 }
@@ -128,6 +87,8 @@ int main(int argc, char **argv)
 	t_vars *vars;
 	t_parsing *p;
 
+	if (argc != 2)
+		return (printf("Usage: %s <map_file>\n", argv[0]), 1);
    	p = malloc(sizeof(t_parsing));
 	if (!p)
 	{
@@ -146,7 +107,6 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	vars->parsing = p;
-	/* Initialize runtime fields to safe defaults */
 	vars->mlx = NULL;
 	vars->win = NULL;
 	vars->background = NULL;
@@ -157,18 +117,6 @@ int main(int argc, char **argv)
 	vars->wall_scale = WALL_SCALE;
 	vars->move_step = 10;
 	vars->cell_size = CELL_SIZE;
-	g_vars = vars;
-	if (argc != 2)
-	{
-		printf("Usage: %s <map_file>\n", argv[0]);
-		mat_free(p->textures);
-		if (p->colors)
-			free(p->colors);
-		if (p->map)
-			mat_free(p->map);
-		free(p);
-		return (1);
-	}
 	if (parsing(p, argv[1]) < 0)
 	{
 		printf("Parsing failed\n");
@@ -177,6 +125,7 @@ int main(int argc, char **argv)
 		mat_free(p->textures);
 		if (p->colors)
 			free(p->colors);
+		free(vars);
 		free(p);
 		return (1);
 	}
@@ -185,7 +134,6 @@ int main(int argc, char **argv)
 	printf("Map loaded successfully. Initializing player...\n");
 	vars->map = p->map;
 	vars->parsing = p;
-	//redraw_scene(vars);
 	init_player(vars);
 	mlx_hook(vars->win, 2, 1L<<0, key_hook, vars);    /* KeyPress, KeyPressMask */
 	mlx_hook(vars->win, 3, 1L<<1, key_release, vars);  /* KeyRelease, KeyReleaseMask */

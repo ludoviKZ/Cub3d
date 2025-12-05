@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2025/11/25 18:59:43 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/02 16:26:17 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,6 @@ int	flood_fill(char **map, int x, int y)
 	if (y < 0 || map[y] == NULL || x < 0 || x >= ft_strlen(map[y])
 		|| map[y][x] == '1' || map[y][x] == 'F' || map[y][x] == '\n')
 		return (0);
-	/* avoid indexing past the end of the string; treat end-of-string like
-	   end-of-line (\n) which should stop the flood-fill without error
-	if (x >= ft_strlen(map[y]) || map[y][x] == '1' || map[y][x] == 'F' || map[y][x] == '\n')
-		return (0);
-	if (map[y] == NULL || x < 0 || y < 0 || map[y][x] == '1'
-		|| map[y][x] == 'F' || map[y][x] == '\n' || map[y][x] == '\0')
-		return (0); */
 	if (map[y][x] == ' ')
 		map[y][x] = 'F';
 	else
@@ -114,11 +107,11 @@ int	check_map(t_parsing *p, char **map)
 		j = 0;
 		while (map[i][j] != '\n' && map[i][j] != '\0')
 		{
-			if ((map[i][j + 1] == '\n' && map[i][j] == '0') || (i > 0 
+			if ((map[i][j + 1] == '\n' && map[i][j] == '0') || (i > 0
 				&& (ft_strlen(map[i - 1]) - 1 <= j && map[i][j] == '0')))
 				return (-1);
 			if ((map[i][j] == ' ' && flood_fill(map, j, i) == -1)
-			 		|| check_player(p, map, i, j) > 1)
+				|| check_player(p, map, i, j) > 1)
 				return (-1);
 			j++;
 		}
