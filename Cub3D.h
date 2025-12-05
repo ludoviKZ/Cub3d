@@ -185,6 +185,7 @@ int validate_move(t_vars *vars, double *ver, double *side);
 void draw_field_of_view(t_vars *vars);
 void check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 void	redraw_scene(t_vars *vars);
+int dir_e_move(t_vars *vars, int ver, int side);
 void draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX, int tex_index);
 void line2D_vars_init(t_line2D *line, int x1, int y1, int x2, int y2, int thickness);
 int  check_for_close_walls(t_vars *vars, t_moveval move);

@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 17:51:06 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/11/30 18:30:09 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/05 15:45:05 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,32 +102,8 @@ int move(void *param)
 		ver = ver / sqrt(2.0);
 		side = side / sqrt(2.0);
 	}
-	if ( (!vars->keys.left || !vars->keys.right) && (vars->keys.left || vars->keys.right) )
-	{
-		if (vars->keys.left)
-			rotate(vars, -3);
-		if (vars->keys.right)
-			rotate(vars, 3);
-		if (ver == 0 && side == 0)
-			draw_field_of_view(vars);
-		if (ver == 0 && side == 0)
-			return (0);
-	}
-	double rad = (vars->player->dir * M_PI) / 180.0;
-	double dx_f = -cos(rad) * (double)ver;
-	double dy_f = -sin(rad) * (double)ver;
-	double dx_s = -sin(rad) * (double)side;
-	double dy_s =  cos(rad) * (double)side;
-	double delta_x = dx_f + dx_s;
-	double delta_y = dy_f + dy_s;
-
-	if (validate_move(vars, &delta_y, &delta_x) == 0)
-	{
-		vars->player->y += delta_y;
-		vars->player->x += delta_x;
-	}
-	if (ver != 0 || side != 0)
-		draw_field_of_view(vars);
+	if (dir_e_move(vars, ver, side) == -1)
+		return (-1);
 	return (0);
 }
 int dir_e_move(t_vars *vars, int ver, int side)
@@ -146,7 +122,7 @@ int dir_e_move(t_vars *vars, int ver, int side)
 	}
 	move.rad = (vars->player->dir * M_PI) / 180.0;
 	move.delta_x = -cos(move.rad) * (double)ver + -sin(move.rad) * (double)side;
-	move.delta_y = -sin(move.rad) * (double)ver; + cos(move.rad) * (double)side;
+	move.delta_y = -sin(move.rad) * (double)ver + cos(move.rad) * (double)side;
 
 	if (validate_move(vars, &move.delta_y, &move.delta_x) == 0)
 	{
