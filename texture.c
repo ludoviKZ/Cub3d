@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/05 17:34:13 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/12 18:08:58 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,27 +43,6 @@ void	draw_background(t_vars *vars, int top, int bottom, char *dst)
 	return ;
 }
 
-void	helper_draw(t_vars *vars, int slice_height)
-{
-	void	*col_img;
-	int		top;
-	int		bottom;
-	int		draw_top;
-	int		draw_bottom;
-
-	top = (MAP_HEIGHT / 2) - (slice_height / 2);
-	bottom = top + slice_height - 1;
-	/* visible draw range (clip to screen) */
-	draw_top = top;
-	if (draw_top < 0)
-		draw_top = 0;
-	draw_bottom = bottom;
-	if (draw_bottom >= MAP_HEIGHT)
-		draw_bottom = MAP_HEIGHT - 1;
-	/* create a temporary 1px-wide image for this column */
-	col_img = mlx_new_image(vars->mlx, 1, MAP_HEIGHT);
-}
-
 void	draw(t_vars *v, double slice_height, double wallX)
 {
 	int		i;
@@ -80,15 +59,8 @@ void	draw(t_vars *v, double slice_height, double wallX)
 		else
 			tex_yf = 0.0;
 		tex_y = (int)(tex_yf + 0.5);
-		if (tex_y < 0)
-			tex_y = 0;
-		if (tex_y >= v->texture->height)
-			tex_y = v->texture->height - 1;
 		tex_x = (int)(wallX * (double)v->texture->width);
-		if (tex_x < 0)
-			tex_x = 0;
-		if (tex_x >= v->texture->width)
-			tex_x = v->texture->width - 1;
+		tex_set(&tex_y, &tex_x, v);
 		v->texture->dst = v->texture->col_addr + (i * v->texture->col_line_len);
 		*(unsigned int *)v->texture->dst = get_pixel(v->texture, tex_x, tex_y);
 		i++;
@@ -104,14 +76,12 @@ void	draw_wall(t_vars *vars, int screen_x, int slice_height, double wallX)
 		return ;
 	vars->texture->top = (MAP_HEIGHT / 2) - (slice_height / 2);
 	vars->texture->bottom = vars->texture->top + slice_height - 1;
-	/* visible draw range (clip to screen) */
 	vars->texture->draw_top = vars->texture->top;
 	if (vars->texture->draw_top < 0)
 		vars->texture->draw_top = 0;
 	vars->texture->draw_bottom = vars->texture->bottom;
 	if (vars->texture->draw_bottom >= MAP_HEIGHT)
 		vars->texture->draw_bottom = MAP_HEIGHT - 1;
-	/* create a temporary 1px-wide image for this column */
 	col_img = mlx_new_image(vars->mlx, 1, MAP_HEIGHT);
 	if (col_img)
 	{

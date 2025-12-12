@@ -1,4 +1,4 @@
-FILES = main.c player.c parsing.c utils.c checks.c raycast.c raycast_extra.c texture.c draw_slice.c movement.c key_hook.c
+FILES = main.c player.c parsing.c utils.c checks.c raycast.c raycast_extra.c texture.c texture_utils.c draw_slice.c movement.c key_hook.c
 OBJ = $(FILES:.c=.o)
 NAME = Cub3D
 MLX_PATH = minilibx/

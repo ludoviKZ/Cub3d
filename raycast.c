@@ -1,7 +1,5 @@
 #include "Cub3D.h"
 
-/* Setup DDA and perform steppgiting until a wall is hit or the ray leaves
-   the map. Variables declared first, assigned after. */
 void	setup_dda(t_vars *vars, t_raycast *r)
 {
 	r->posx = (double)r->px / (double)vars->cell_size;
@@ -31,8 +29,6 @@ void	setup_dda(t_vars *vars, t_raycast *r)
 	setup_dda_extra(vars, r);
 }
 
-/* Compute ray direction for a given ray index. Variables are declared at the
-   top and assigned on separate lines to meet the requested style. */
 void compute_ray_direction(t_vars *vars, t_raycast *r, int index)
 {
 	(void)vars;
@@ -42,8 +38,6 @@ void compute_ray_direction(t_vars *vars, t_raycast *r, int index)
 	r->raydiry = sin(r->rad);
 }
 
-/* Top-level draw function: iterates rays using a while loop (no for loops).
-   It orchestrates the per-ray helpers placed across files. */
 void draw_field_of_view(t_vars *vars)
 {
 	t_raycast   r;
@@ -73,6 +67,7 @@ void draw_field_of_view(t_vars *vars)
 		i++;
 	}
 }
+
 void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 {
 	double wallX;
@@ -81,19 +76,19 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 	if (r->side == 0)
 	{
 		if (r->raydirx > 0)
-			vars->texture->tex_index = 2; /* WE */
+			vars->texture->tex_index = 2;
 		else
-			vars->texture->tex_index = 3; /* EA */
+			vars->texture->tex_index = 3;
 	}
 	else
 	{
 		if (r->raydiry > 0)
-			vars->texture->tex_index = 1; /* SO */
+			vars->texture->tex_index = 1;
 		else
-			vars->texture->tex_index = 0; /* NO */
+			vars->texture->tex_index = 0;
 	}
 	if (vars->texture->tex_index == 1 || vars->texture->tex_index == 3)
-		wallX = 1.0 - wallX; /* Flip for SO and EA walls */
+		wallX = 1.0 - wallX;
 	draw_3D_wall_slice(vars, r, wallX);
 }
 

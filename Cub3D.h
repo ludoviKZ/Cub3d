@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/12/12 16:53:55 by lzorzit          ###   ########.fr       */
-=======
-/*   Updated: 2025/12/12 17:27:26 by kbossio          ###   ########.fr       */
->>>>>>> origin/kri
+/*   Updated: 2025/12/12 18:07:07 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,6 +202,7 @@ void	set_player_dir(t_vars *vars, char dir);
 int		init_texture(t_vars *vars, t_texture *t, t_parsing *p);
 int		init_texture_values(t_texture *texture);
 int		check_for_close_walls(t_vars *vars, t_moveval move);
+void	tex_set(int *tex_y, int *tex_x, t_vars *v);
 
 /* Raycast helper functions (refactor targets) */
 void	compute_ray_direction(t_vars *vars, t_raycast *r, int index);
