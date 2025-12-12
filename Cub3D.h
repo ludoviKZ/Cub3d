@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/05 17:59:43 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/12 17:27:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ typedef struct s_raycast
 int		parsing(t_parsing *parsing, char *map_file);
 void	cleanup(t_vars *vars);
 int		line_count(char *map_file);
-int		mat_free(char **matrix);
+int		mf(char **matrix, char *unused);
 int		check_textures(t_parsing *p);
 char	**dup_matrix(char **map, t_parsing *p);
 void	draw_texture(t_vars *vars, int ray, int slice_height, double wallX);

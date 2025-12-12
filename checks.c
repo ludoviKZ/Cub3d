@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/02 18:12:47 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/12 17:28:41 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	has_xpm_ext(const char *s)
 
 int	skip_spaces(char *line, int *index)
 {
-	while (line[*index] == ' ' || line[*index] == '\t')
+	while (line[*index] && (line[*index] == ' ' || line[*index] == '\t'))
 		(*index)++;
 	return (0);
 }
@@ -68,12 +68,12 @@ int	check_lines(char **map)
 	return (i);
 }
 
-void	check_tex(char *line, int *cont, t_parsing *p)
+void	check_tex(char *l, int *cont, t_parsing *p)
 {
 	int			i;
 	int			j;
 	int			k;
-	static char	*tex_names[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
+	static char	*tn[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
 	char		*tmp;
 
 	i = 0;
@@ -81,12 +81,12 @@ void	check_tex(char *line, int *cont, t_parsing *p)
 	{
 		j = 0;
 		k = 0;
-		skip_spaces(line, &k);
-		while (tex_names[i][j] != '\0' && line[j + k] == tex_names[i][j])
+		skip_spaces(l, &k);
+		while (tn[i][j] != '\0' && l[j + k] == tn[i][j])
 			j++;
-		if (tex_names[i][j] == '\0' && line[j + k] == ' ')
+		if (tn[i][j] == '\0' && (l[j + k] == ' ' || l[j + k] == '\t'))
 		{
-			tmp = ft_strtrim(line + j + k, " \t\n");
+			tmp = ft_strtrim(l + j + k, " \t\n");
 			if (!tmp)
 				return ;
 			if (!p->textures[i])
@@ -116,14 +116,12 @@ int	syntax_check_rgb(t_parsing *parsing, char **textures)
 			return (free(trimmed), -1);
 		free(trimmed);
 		if (!parts[0] || !parts[1] || !parts[2] || parts[3])
-			return (printf("Error\n"), mat_free(parts), -1);
+			return (printf("Error\n"), mf(parts, NULL), -1);
 		parsing->colors[i - 4] = rgb_to_color(parts);
 		if (parsing->colors[i - 4] == -1)
-			return (printf("Error\n"), mat_free(parts), -1);
-		free(textures[i]);
-		textures[i] = NULL;
-		mat_free(parts);
-		i++;
+			return (printf("Error\n"), mf(parts, NULL), -1);
+		mf(parts, textures[i]);
+		textures[i++] = NULL;
 	}
 	return (0);
 }
@@ -142,8 +140,10 @@ int	syntax_check(t_parsing *parsing, char **textures)
 		if (i < 4)
 		{
 			trimmed = ft_strtrim(textures[i], " \t\n");
-			if (!trimmed || !has_xpm_ext(trimmed))
+			if (!trimmed)
 				return (-1);
+			if (!has_xpm_ext(trimmed))
+				return (free(trimmed), -1);
 			fd = open(trimmed, O_RDONLY | __O_DIRECTORY);
 			if (fd != -1)
 				return (close(fd), free(trimmed), -1);
@@ -171,7 +171,7 @@ int	check_textures(t_parsing *p)
 	while (p->map[i] && cont < 6)
 		check_tex(p->map[i++], &cont, p);
 	if (cont < 6)
-		return (printf("Error\n"), -1);
+		return (-1);
 	while (p->map[i])
 	{
 		j = 0;
