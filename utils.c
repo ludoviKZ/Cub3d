@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/05 17:32:02 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/12 17:28:06 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-int	mat_free(char **matrix)
+int	mf(char **matrix, char *unused)
 {
 	int	i;
 
@@ -25,6 +25,8 @@ int	mat_free(char **matrix)
 		i++;
 	}
 	free(matrix);
+	if (unused)
+		free(unused);
 	return (0);
 }
 
@@ -54,7 +56,7 @@ char	**dup_matrix(char **map, t_parsing *p)
 		}
 		i++;
 	}
-	return (new_map[i] = NULL, mat_free(p->map), new_map);
+	return (new_map[i] = NULL, mf(p->map, NULL), new_map);
 }
 
 int	isnum(char **str)

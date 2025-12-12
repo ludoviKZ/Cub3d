@@ -25,26 +25,26 @@ void setup_dda_extra(t_vars *vars, t_raycast *r)
 	setup_dda_extra_extra(r);
 	while (!r->hit)
 	{
-		if (r->sideDistX < r->sideDistY)
+		if (r->sidedistx < r->sidedisty)
 		{
-			r->sideDistX += r->deltaDistX;
-			r->mapX += r->stepX;
+			r->sidedistx += r->deltadistx;
+			r->mapx += r->stepx;
 			r->side = 0;
 		}
 		else
 		{
-			r->sideDistY += r->deltaDistY;
-			r->mapY += r->stepY;
+			r->sidedisty += r->deltadisty;
+			r->mapy += r->stepy;
 			r->side = 1;
 		}
-		if (r->mapY < 0 || r->mapY >= r->map_rows)
+		if (r->mapy < 0 || r->mapy >= r->map_rows)
 			break;
-		int row_len = ft_strlen(vars->map[r->mapY]);
-		if (r->mapX < 0 || r->mapX >= row_len)
+		int row_len = ft_strlen(vars->map[r->mapy]);
+		if (r->mapx < 0 || r->mapx >= row_len)
 			break;
-		if (vars->map[r->mapY] && vars->map[r->mapY][r->mapX] == '1')
+		if (vars->map[r->mapy] && vars->map[r->mapy][r->mapx] == '1')
 			r->hit = 1;
-		if (vars->map[r->mapY] && vars->map[r->mapY][r->mapX] == '1')
+		if (vars->map[r->mapy] && vars->map[r->mapy][r->mapx] == '1')
 			break;
 	}
 }

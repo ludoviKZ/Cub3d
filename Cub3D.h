@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/12/12 16:53:55 by lzorzit          ###   ########.fr       */
+=======
+/*   Updated: 2025/12/12 17:27:26 by kbossio          ###   ########.fr       */
+>>>>>>> origin/kri
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,14 +119,13 @@ typedef struct s_vars
 	t_player	*player;
 	t_texture	*texture;
 	t_keys		keys;
-	/* Runtime adjustable parameters */
-	double 		wall_scale; /* current wall scale (initialized from WALL_SCALE) */
-	int			move_step;  /* pixels moved per step */
-	int			cell_size;  /* runtime cell size (initialized from CELL_SIZE macro) */
+	double		wall_scale;
+	int			move_step;
+	int			cell_size;
 }	t_vars;
 
 typedef struct s_moveval
-{	
+{
 	double		new_x;
 	double		new_y;
 	int			rows;
@@ -157,22 +160,22 @@ typedef struct s_raycast
 	int		ray_index;
 	double	ray_angle;
 	double	rad;
-	double	rayDirX;
-	double	rayDirY;
-	double	posX;
-	double	posY;
-	int		mapX;
-	int		mapY;
-	double	deltaDistX;
-	double	deltaDistY;
-	double	sideDistX;
-	double	sideDistY;
-	int		stepX;
-	int		stepY;
+	double	raydirx;
+	double	raydiry;
+	double	posx;
+	double	posy;
+	int		mapx;
+	int		mapy;
+	double	deltadistx;
+	double	deltadisty;
+	double	sidedistx;
+	double	sidedisty;
+	int		stepx;
+	int		stepy;
 	int		hit;
 	int		side;
-	double	perpWallDist;
-	double	wallDistPixels;
+	double	perpwalldist;
+	double	walldistpixels;
 	int		hit_px;
 	int		hit_py;
 	int		map_rows;
@@ -182,12 +185,11 @@ typedef struct s_raycast
 int		parsing(t_parsing *parsing, char *map_file);
 void	cleanup(t_vars *vars);
 int		line_count(char *map_file);
-int		mat_free(char **matrix);
+int		mf(char **matrix, char *unused);
 int		check_textures(t_parsing *p);
 char	**dup_matrix(char **map, t_parsing *p);
 void	draw_texture(t_vars *vars, int ray, int slice_height, double wallX);
 int		rgb_to_color(char **rgb);
-//void draw_wall(void *mlx, void *win, t_vars *vars, int ray, int slice_height);
 
 // Ludo
 int		init_player(t_vars *vars);
@@ -198,21 +200,19 @@ int		move(void *param);
 void	rotate(t_vars *vars, int angle);
 int		validate_move(t_vars *vars, double *ver, double *side);
 void	draw_field_of_view(t_vars *vars);
-void	check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 int		dir_e_move(t_vars *vars, int ver, int side);
-void	draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX);
+void	draw_3D_wall_slice(t_vars *vars, t_raycast *r, double wallX);
 void	set_player_dir(t_vars *vars, char dir);
 int		init_texture(t_vars *vars, t_texture *t, t_parsing *p);
 int		init_texture_values(t_texture *texture);
 int		check_for_close_walls(t_vars *vars, t_moveval move);
 
-
 /* Raycast helper functions (refactor targets) */
-void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);	
-void    setup_dda(t_vars *vars, t_raycast *r);
-void    setup_dda_extra(t_vars *vars, t_raycast *r);
-void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
-double  compute_delta_dist(double rayDir);
+void	compute_ray_direction(t_vars *vars, t_raycast *r, int index);
+void	setup_dda(t_vars *vars, t_raycast *r);
+void	setup_dda_extra(t_vars *vars, t_raycast *r);
+void	compute_hit_and_pixels(t_vars *vars, t_raycast *r);
+double	compute_delta_dist(double rayDir);
 int		slice_height_calc(t_vars *vars, double perpWallDist);
 int		validate_move_cell(t_vars *vars, double x, double y);
 void	setup_dda_extra(t_vars *vars, t_raycast *r);

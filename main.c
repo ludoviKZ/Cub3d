@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/05 17:16:20 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/12 17:28:32 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ void	cleanup(t_vars *g_vars)
 	if (g_vars->parsing)
 	{
 		if (g_vars->parsing->map)
-			mat_free(g_vars->parsing->map);
+			mf(g_vars->parsing->map, NULL);
 		if (g_vars->parsing->textures)
-			mat_free(g_vars->parsing->textures);
+			mf(g_vars->parsing->textures, NULL);
 		if (g_vars->parsing->colors)
 			free(g_vars->parsing->colors);
 		free(g_vars->parsing);
@@ -55,7 +55,7 @@ t_parsing	*parsing_init(void)
 		p->textures[i++] = NULL;
 	p->colors = malloc(sizeof(int) * 2);
 	if (!p->colors)
-		return (mat_free(p->textures), printf("Error\nMalloc failed\n"), NULL);
+		return (mf(p->textures, NULL), printf("Error\nMalloc failed\n"), NULL);
 	p->colors[0] = -1;
 	p->colors[1] = -1;
 	return (p);
@@ -67,7 +67,8 @@ t_vars	*init_vars(t_parsing *p)
 
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
-		return (free(p->colors), mat_free(p->textures), free(p), NULL);
+		return (free(p->colors), mf(p->textures, NULL),
+			free(p), NULL);
 	vars->mlx = NULL;
 	vars->win = NULL;
 	vars->map = NULL;
@@ -104,11 +105,11 @@ int	main(int argc, char **argv)
 	if (parsing(p, argv[1]) < 0)
 	{
 		if (p->map)
-			mat_free(p->map);
+			mf(p->map, NULL);
 		if (p->colors)
 			free(p->colors);
 		printf("Error\nParsing failed\n");
-		return (mat_free(p->textures), free(vars), free(p), 1);
+		return (mf(p->textures, NULL), free(vars), free(p), 1);
 	}
 	vars->mlx = mlx_init();
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");

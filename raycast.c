@@ -4,29 +4,29 @@
    the map. Variables declared first, assigned after. */
 void	setup_dda(t_vars *vars, t_raycast *r)
 {
-	r->posX = (double)r->px / (double)vars->cell_size;
-	r->posY = (double)r->py / (double)vars->cell_size;
-	r->mapX = (int)r->posX;
-	r->mapY = (int)r->posY;
-	r->deltaDistX = compute_delta_dist(r->rayDirX);
-	r->deltaDistY = compute_delta_dist(r->rayDirY);
-	if (r->rayDirX < 0)
-		r->stepX = -1;
-	if (r->rayDirX < 0)
-		r->sideDistX = (r->posX - r->mapX) * r->deltaDistX;
+	r->posx = (double)r->px / (double)vars->cell_size;
+	r->posy = (double)r->py / (double)vars->cell_size;
+	r->mapx = (int)r->posx;
+	r->mapy = (int)r->posy;
+	r->deltadistx = compute_delta_dist(r->raydirx);
+	r->deltadisty = compute_delta_dist(r->raydiry);
+	if (r->raydirx < 0)
+		r->stepx = -1;
+	if (r->raydirx < 0)
+		r->sidedistx = (r->posx - r->mapx) * r->deltadistx;
 	else
 	{
-		r->stepX = 1;
-		r->sideDistX = (r->mapX + 1.0 - r->posX) * r->deltaDistX;
+		r->stepx = 1;
+		r->sidedistx = (r->mapx + 1.0 - r->posx) * r->deltadistx;
 	}
-	if (r->rayDirY < 0)
-		r->stepY = -1;
-	if (r->rayDirY < 0)
-		r->sideDistY = (r->posY - r->mapY) * r->deltaDistY;
+	if (r->raydiry < 0)
+		r->stepy = -1;
+	if (r->raydiry < 0)
+		r->sidedisty = (r->posy - r->mapy) * r->deltadisty;
 	else
 	{
-		r->stepY = 1;
-		r->sideDistY = (r->mapY + 1.0 - r->posY) * r->deltaDistY;
+		r->stepy = 1;
+		r->sidedisty = (r->mapy + 1.0 - r->posy) * r->deltadisty;
 	}
 	setup_dda_extra(vars, r);
 }
@@ -38,8 +38,8 @@ void compute_ray_direction(t_vars *vars, t_raycast *r, int index)
 	(void)vars;
 	r->ray_angle = r->start_angle + ((double)index * r->angle_step);
 	r->rad = r->ray_angle * (M_PI / 180.0);
-	r->rayDirX = cos(r->rad);
-	r->rayDirY = sin(r->rad);
+	r->raydirx = cos(r->rad);
+	r->raydiry = sin(r->rad);
 }
 
 /* Top-level draw function: iterates rays using a while loop (no for loops).
@@ -80,21 +80,21 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 	compute_vars_setup(vars, r, &wallX);
 	if (r->side == 0)
 	{
-		if (r->rayDirX > 0)
+		if (r->raydirx > 0)
 			vars->texture->tex_index = 2; /* WE */
 		else
 			vars->texture->tex_index = 3; /* EA */
 	}
 	else
 	{
-		if (r->rayDirY > 0)
+		if (r->raydiry > 0)
 			vars->texture->tex_index = 1; /* SO */
 		else
 			vars->texture->tex_index = 0; /* NO */
 	}
 	if (vars->texture->tex_index == 1 || vars->texture->tex_index == 3)
 		wallX = 1.0 - wallX; /* Flip for SO and EA walls */
-	draw_3D_wall_slice(vars, r->ray_index, r->hit_px, r->hit_py, r->perpWallDist, r->ray_angle, wallX);
+	draw_3D_wall_slice(vars, r, wallX);
 }
 
 void compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX)
@@ -105,20 +105,20 @@ void compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX)
 	if (r->hit)
 	{
 		if (r->side == 0)
-			rayLength = (r->mapX - r->posX + (1 - r->stepX) / 2.0) / safe_denominator(r->rayDirX);
+			rayLength = (r->mapx - r->posx + (1 - r->stepx) / 2.0) / safe_denominator(r->raydirx);
 		else
-			rayLength = (r->mapY - r->posY + (1 - r->stepY) / 2.0) / safe_denominator(r->rayDirY);
+			rayLength = (r->mapy - r->posy + (1 - r->stepy) / 2.0) / safe_denominator(r->raydiry);
 	}
 	else
 		rayLength = (double)r->max_length / (double)vars->cell_size;
-	r->hit_px = r->px + (int)round(r->rayDirX * rayLength * (double)vars->cell_size);
-	r->hit_py = r->py + (int)round(r->rayDirY * rayLength * (double)vars->cell_size);
+	r->hit_px = r->px + (int)round(r->raydirx * rayLength * (double)vars->cell_size);
+	r->hit_py = r->py + (int)round(r->raydiry * rayLength * (double)vars->cell_size);
 	angle_diff = r->rad - (double)vars->player->dir * (M_PI / 180.0);
-	r->perpWallDist = rayLength * cos(angle_diff);
-	r->wallDistPixels =  r->perpWallDist * (double)vars->cell_size;
+	r->perpwalldist = rayLength * cos(angle_diff);
+	r->walldistpixels =  r->perpwalldist * (double)vars->cell_size;
 	if (r->side == 0)
-		*wallX = r->posY + rayLength * r->rayDirY;
+		*wallX = r->posy + rayLength * r->raydiry;
 	else
-		*wallX = r->posX + rayLength * r->rayDirX;
+		*wallX = r->posx + rayLength * r->raydirx;
 	*wallX -= floor(*wallX);
 }
