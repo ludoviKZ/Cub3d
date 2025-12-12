@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/05 17:44:07 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:53:55 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,11 +202,13 @@ void	check_line_collision(t_vars *vars, int x1, int y1, int *x2, int *y2);
 int		dir_e_move(t_vars *vars, int ver, int side);
 void	draw_3D_wall_slice(t_vars *vars, int ray, int px, int py, double perpWallDist, double ray_angle, double wallX);
 void	set_player_dir(t_vars *vars, char dir);
+int		init_texture(t_vars *vars, t_texture *t, t_parsing *p);
+int		init_texture_values(t_texture *texture);
 int		check_for_close_walls(t_vars *vars, t_moveval move);
 
 
 /* Raycast helper functions (refactor targets) */
-void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);
+void    compute_ray_direction(t_vars *vars, t_raycast *r, int index);	
 void    setup_dda(t_vars *vars, t_raycast *r);
 void    setup_dda_extra(t_vars *vars, t_raycast *r);
 void    compute_hit_and_pixels(t_vars *vars, t_raycast *r);
