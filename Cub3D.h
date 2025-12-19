@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 16:34:41 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/19 18:04:04 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,7 @@ int		parsing(t_parsing *parsing, char *map_file);
 void	cleanup(t_vars *vars);
 int		line_count(char *map_file);
 int		mf(char **matrix, char *unused);
+void	free_textures(char **textures);
 int		check_textures(t_parsing *p);
 char	**dup_matrix(char **map, t_parsing *p);
 void	draw_texture(t_vars *vars, int ray, int slice_height, double wallX);
@@ -190,6 +191,8 @@ int		has_xpm_ext(const char *s);
 int		skip_spaces(char *line, int *index);
 int		check_matr(char **str);
 int		check_lines(char **map);
+void	set_texture(t_parsing *p, int i, char *l, int *cont);
+void	free_init_player(t_vars *vars);
 
 // Ludo
 int		init_player(t_vars *vars);
