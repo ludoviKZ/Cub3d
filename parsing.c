@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/02 16:26:17 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 14:28:49 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,6 @@ int	check_player(t_parsing *p, char **map, int i, int j)
 		return (cont);
 	}
 	return (cont);
-}
-
-int	check_fl(char *line)
-{
-	int	j;
-
-	j = 0;
-	while (line[j] != '\n' && line[j] != '\0')
-	{
-		if (line[j] != '1' && line[j] != ' ')
-			return (-1);
-		j++;
-	}
-	return (0);
 }
 
 int	flood_fill(char **map, int x, int y)
@@ -120,27 +106,6 @@ int	check_map(t_parsing *p, char **map)
 	if (p->pl_x == -1)
 		return (-1);
 	return (0);
-}
-
-int	line_count(char *map_file)
-{
-	int		count;
-	int		fd;
-	char	*line;
-
-	count = 0;
-	fd = open(map_file, O_RDONLY);
-	if (fd == -1)
-		return (-1);
-	line = get_next_line(fd);
-	while (line != NULL)
-	{
-		free(line);
-		count++;
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (count);
 }
 
 int	parsing(t_parsing *parsing, char *map_file)

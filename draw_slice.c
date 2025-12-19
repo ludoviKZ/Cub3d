@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw_slice.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/19 13:45:48 by kbossio           #+#    #+#             */
+/*   Updated: 2025/12/19 14:25:44 by kbossio          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <math.h>
 #include "Cub3D.h"
 
 /* draw_field_of_view was refactored into raycast.c / raycast_extra.c.
    The implementation was moved to keep player.c focused on player logic. */
 
-int slice_height_calc(t_vars *vars, double perpWallDist)
+int	slice_height_calc(t_vars *vars, double perpWallDist)
 {
-	double corrected_dist_pixels;
+	double	corrected_dist_pixels;
 
 	/* perpWallDist is already the perpendicular distance (in map cells)
 	   computed by the DDA. Convert to pixels and use directly — no extra
@@ -16,14 +28,15 @@ int slice_height_calc(t_vars *vars, double perpWallDist)
 		corrected_dist_pixels = 0.0001;
 	if (corrected_dist_pixels < 1.0)
 		corrected_dist_pixels = 1.0;
-	return (int)((MAP_HEIGHT * vars->wall_scale) / corrected_dist_pixels);
+	return ((int)((MAP_HEIGHT * vars->wall_scale) / corrected_dist_pixels));
 }
-void draw_3D_wall_slice(t_vars *vars, t_raycast *r, double wallX)
+
+void	draw_3d_wall_slice(t_vars *vars, t_raycast *r, double wallX)
 {
-	int slice_height;
-	int top;
-	int bottom;
-	int wall_color;
+	int	slice_height;
+	int	top;
+	int	bottom;
+	int	wall_color;
 
 	slice_height = slice_height_calc(vars, r->perpwalldist);
 	/* Keep the calculated slice_height even if it's larger than the screen.
@@ -39,12 +52,9 @@ void draw_3D_wall_slice(t_vars *vars, t_raycast *r, double wallX)
 	/* Draw ceiling and floor for this column in a single call. Pass both
 	   ceiling and floor parsed colors (parsing->colors[1] = ceiling,
 	   parsing->colors[0] = floor). Keep a single blit per-column. */
-	//draw_background(vars, ray, top, bottom, vars->parsing->colors[1], vars->parsing->colors[0]);
-	// mlx_put_image_to_window(vars->mlx, vars->win, vars->background, ray, 0);
 	wall_color = 0x808080;
 	if (bottom >= top)
 		draw_texture(vars, r->ray_index, slice_height, wallX);
-
 	/* floor is handled by the single draw_background call above */
-	return;
+	return ;
 }

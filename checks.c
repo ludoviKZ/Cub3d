@@ -3,70 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/12 17:28:41 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 14:39:48 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
-
-static int	has_xpm_ext(const char *s)
-{
-	size_t	len;
-
-	if (!s)
-		return (0);
-	len = ft_strlen(s);
-	if (len < 4)
-		return (0);
-	return (ft_strncmp(s + len - 4, ".xpm", 4) == 0);
-}
-
-int	skip_spaces(char *line, int *index)
-{
-	while (line[*index] && (line[*index] == ' ' || line[*index] == '\t'))
-		(*index)++;
-	return (0);
-}
-
-int	check_matr(char **str)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (str[i])
-	{
-		j = 0;
-		while (str[i][j] != '\n' && str[i][j] != '\0')
-		{
-			j++;
-		}
-		if (j == 0)
-			return (-1);
-		i++;
-	}
-	return (0);
-}
-
-int	check_lines(char **map)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (map[i])
-	{
-		j = 0;
-		skip_spaces(map[i], &j);
-		if (map[i][j] == '\n' || map[i][j] == '\0')
-			return (i);
-		i++;
-	}
-	return (i);
-}
 
 void	check_tex(char *l, int *cont, t_parsing *p)
 {
@@ -126,6 +70,25 @@ int	syntax_check_rgb(t_parsing *parsing, char **textures)
 	return (0);
 }
 
+int	syntax_check_helper(char **textures, int i)
+{
+	int		fd;
+	char	*trimmed;
+
+	trimmed = ft_strtrim(textures[i], " \t\n");
+	if (!has_xpm_ext(trimmed))
+		return (free(trimmed), -1);
+	fd = open(trimmed, O_RDONLY | __O_DIRECTORY);
+	if (fd != -1)
+		return (close(fd), free(trimmed), -1);
+	fd = open(trimmed, O_RDONLY);
+	if (fd == -1)
+		return (free(trimmed), -1);
+	close(fd);
+	free(trimmed);
+	return (0);
+}
+
 int	syntax_check(t_parsing *parsing, char **textures)
 {
 	int		i;
@@ -139,19 +102,8 @@ int	syntax_check(t_parsing *parsing, char **textures)
 			return (-1);
 		if (i < 4)
 		{
-			trimmed = ft_strtrim(textures[i], " \t\n");
-			if (!trimmed)
+			if (syntax_check_helper(textures, i) == -1)
 				return (-1);
-			if (!has_xpm_ext(trimmed))
-				return (free(trimmed), -1);
-			fd = open(trimmed, O_RDONLY | __O_DIRECTORY);
-			if (fd != -1)
-				return (close(fd), free(trimmed), -1);
-			fd = open(trimmed, O_RDONLY);
-			if (fd == -1)
-				return (free(trimmed), -1);
-			close(fd);
-			free(trimmed);
 		}
 		i++;
 	}

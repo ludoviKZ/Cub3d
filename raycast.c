@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycast.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/19 14:04:30 by kbossio           #+#    #+#             */
+/*   Updated: 2025/12/19 14:25:04 by kbossio          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Cub3D.h"
 
 void	setup_dda(t_vars *vars, t_raycast *r)
@@ -29,7 +41,7 @@ void	setup_dda(t_vars *vars, t_raycast *r)
 	setup_dda_extra(vars, r);
 }
 
-void compute_ray_direction(t_vars *vars, t_raycast *r, int index)
+void	compute_ray_direction(t_vars *vars, t_raycast *r, int index)
 {
 	(void)vars;
 	r->ray_angle = r->start_angle + ((double)index * r->angle_step);
@@ -38,15 +50,15 @@ void compute_ray_direction(t_vars *vars, t_raycast *r, int index)
 	r->raydiry = sin(r->rad);
 }
 
-void draw_field_of_view(t_vars *vars)
+void	draw_field_of_view(t_vars *vars)
 {
-	t_raycast   r;
-	int         i;
+	t_raycast	r;
+	int			i;
 
 	if (!vars || !vars->player || !vars->map)
-		return;
+		return ;
 	printf("Drawing field of view for player at (%.2f, %.2f) facing %d degrees\n",
-	vars->player->x, vars->player->y, vars->player->dir);
+		vars->player->x, vars->player->y, vars->player->dir);
 	r.fov_angle = 60;
 	r.num_rays = MAP_WIDTH;
 	r.max_length = 400;
@@ -70,9 +82,9 @@ void draw_field_of_view(t_vars *vars)
 
 void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 {
-	double wallX;
+	double	wallx;
 
-	compute_vars_setup(vars, r, &wallX);
+	compute_vars_setup(vars, r, &wallx);
 	if (r->side == 0)
 	{
 		if (r->raydirx > 0)
@@ -88,32 +100,34 @@ void	compute_hit_and_pixels(t_vars *vars, t_raycast *r)
 			vars->texture->tex_index = 0;
 	}
 	if (vars->texture->tex_index == 1 || vars->texture->tex_index == 3)
-		wallX = 1.0 - wallX;
-	draw_3D_wall_slice(vars, r, wallX);
+		wallx = 1.0 - wallx;
+	draw_3d_wall_slice(vars, r, wallx);
 }
 
-void compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX)
+void	compute_vars_setup(t_vars *vars, t_raycast *r, double *wallX)
 {
-	double  rayLength;
-	double  angle_diff;
+	double	rl;
+	double	angle_diff;
 
 	if (r->hit)
 	{
 		if (r->side == 0)
-			rayLength = (r->mapx - r->posx + (1 - r->stepx) / 2.0) / safe_denominator(r->raydirx);
+			rl = (r->mapx - r->posx + (1 - r->stepx) / 2.0)
+				/ safe_denominator(r->raydirx);
 		else
-			rayLength = (r->mapy - r->posy + (1 - r->stepy) / 2.0) / safe_denominator(r->raydiry);
+			rl = (r->mapy - r->posy + (1 - r->stepy) / 2.0)
+				/ safe_denominator(r->raydiry);
 	}
 	else
-		rayLength = (double)r->max_length / (double)vars->cell_size;
-	r->hit_px = r->px + (int)round(r->raydirx * rayLength * (double)vars->cell_size);
-	r->hit_py = r->py + (int)round(r->raydiry * rayLength * (double)vars->cell_size);
+		rl = (double)r->max_length / (double)vars->cell_size;
+	r->hit_px = r->px + (int)round(r->raydirx * rl * (double)vars->cell_size);
+	r->hit_py = r->py + (int)round(r->raydiry * rl * (double)vars->cell_size);
 	angle_diff = r->rad - (double)vars->player->dir * (M_PI / 180.0);
-	r->perpwalldist = rayLength * cos(angle_diff);
-	r->walldistpixels =  r->perpwalldist * (double)vars->cell_size;
+	r->perpwalldist = rl * cos(angle_diff);
+	r->walldistpixels = r->perpwalldist * (double)vars->cell_size;
 	if (r->side == 0)
-		*wallX = r->posy + rayLength * r->raydiry;
+		*wallX = r->posy + rl * r->raydiry;
 	else
-		*wallX = r->posx + rayLength * r->raydirx;
+		*wallX = r->posx + rl * r->raydirx;
 	*wallX -= floor(*wallX);
 }

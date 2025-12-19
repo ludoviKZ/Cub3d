@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/12 18:07:07 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/19 14:24:27 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,12 @@ typedef struct s_moveval
 	double		new_x;
 	double		new_y;
 	int			rows;
-	int			cell_row;
-	int			cell_col;
-	int			cell_row2;
-	int			cell_col2;
-	int			cell_row3;
-	int			cell_col3;
+	int			cr;
+	int			cc;
+	int			cr2;
+	int			cc2;
+	int			cr3;
+	int			cc3;
 }	t_moveval;
 
 typedef struct s_movecalc
@@ -197,7 +197,7 @@ void	rotate(t_vars *vars, int angle);
 int		validate_move(t_vars *vars, double *ver, double *side);
 void	draw_field_of_view(t_vars *vars);
 int		dir_e_move(t_vars *vars, int ver, int side);
-void	draw_3D_wall_slice(t_vars *vars, t_raycast *r, double wallX);
+void	draw_3d_wall_slice(t_vars *vars, t_raycast *r, double wallX);
 void	set_player_dir(t_vars *vars, char dir);
 int		init_texture(t_vars *vars, t_texture *t, t_parsing *p);
 int		init_texture_values(t_texture *texture);
