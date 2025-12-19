@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 14:24:27 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 16:34:41 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,10 @@ int		check_textures(t_parsing *p);
 char	**dup_matrix(char **map, t_parsing *p);
 void	draw_texture(t_vars *vars, int ray, int slice_height, double wallX);
 int		rgb_to_color(char **rgb);
+int		has_xpm_ext(const char *s);
+int		skip_spaces(char *line, int *index);
+int		check_matr(char **str);
+int		check_lines(char **map);
 
 // Ludo
 int		init_player(t_vars *vars);

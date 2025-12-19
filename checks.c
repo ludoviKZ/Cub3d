@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 14:39:48 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 16:24:28 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,6 @@ int	syntax_check_helper(char **textures, int i)
 int	syntax_check(t_parsing *parsing, char **textures)
 {
 	int		i;
-	int		fd;
-	char	*trimmed;
 
 	i = 0;
 	while (i < 6)

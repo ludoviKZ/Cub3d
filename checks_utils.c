@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   checks_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 14:21:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 14:37:47 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 16:25:30 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-static int	has_xpm_ext(const char *s)
+int	has_xpm_ext(const char *s)
 {
 	size_t	len;
 

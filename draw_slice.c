@@ -3,26 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   draw_slice.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 13:45:48 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 14:25:44 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 16:36:00 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
 #include "Cub3D.h"
 
-/* draw_field_of_view was refactored into raycast.c / raycast_extra.c.
-   The implementation was moved to keep player.c focused on player logic. */
-
 int	slice_height_calc(t_vars *vars, double perpWallDist)
 {
 	double	corrected_dist_pixels;
 
-	/* perpWallDist is already the perpendicular distance (in map cells)
-	   computed by the DDA. Convert to pixels and use directly — no extra
-	   fisheye cosine correction required here. */
 	corrected_dist_pixels = perpWallDist * (double)vars->cell_size;
 	if (corrected_dist_pixels < 0.0001)
 		corrected_dist_pixels = 0.0001;
@@ -39,8 +33,6 @@ void	draw_3d_wall_slice(t_vars *vars, t_raycast *r, double wallX)
 	int	wall_color;
 
 	slice_height = slice_height_calc(vars, r->perpwalldist);
-	/* Keep the calculated slice_height even if it's larger than the screen.
-	   We'll only draw the visible rows — do not scale the wall to fit. */
 	if (slice_height < 1)
 		slice_height = 1;
 	top = (MAP_HEIGHT / 2) - (slice_height / 2);
@@ -49,12 +41,8 @@ void	draw_3d_wall_slice(t_vars *vars, t_raycast *r, double wallX)
 		top = 0;
 	if (bottom >= MAP_HEIGHT)
 		bottom = MAP_HEIGHT - 1;
-	/* Draw ceiling and floor for this column in a single call. Pass both
-	   ceiling and floor parsed colors (parsing->colors[1] = ceiling,
-	   parsing->colors[0] = floor). Keep a single blit per-column. */
 	wall_color = 0x808080;
 	if (bottom >= top)
 		draw_texture(vars, r->ray_index, slice_height, wallX);
-	/* floor is handled by the single draw_background call above */
 	return ;
 }
