@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/12 17:28:32 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 18:23:50 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	cleanup(t_vars *g_vars)
 		if (g_vars->parsing->map)
 			mf(g_vars->parsing->map, NULL);
 		if (g_vars->parsing->textures)
-			mf(g_vars->parsing->textures, NULL);
+			free_textures(g_vars->parsing->textures);
 		if (g_vars->parsing->colors)
 			free(g_vars->parsing->colors);
 		free(g_vars->parsing);
@@ -109,11 +109,11 @@ int	main(int argc, char **argv)
 		if (p->colors)
 			free(p->colors);
 		printf("Error\nParsing failed\n");
-		return (mf(p->textures, NULL), free(vars), free(p), 1);
+		return (free_textures(p->textures), free(vars), free(p), 1);
 	}
 	vars->mlx = mlx_init();
 	vars->win = mlx_new_window(vars->mlx, 1024, 512, "2D Map");
 	vars->map = p->map;
 	vars->parsing = p;
-	return (init_player(vars), 0);
+	return (init_player(vars));
 }

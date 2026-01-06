@@ -3,14 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   checks_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 14:21:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 16:25:30 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/19 17:55:43 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
+
+void	set_texture(t_parsing *p, int i, char *l, int *cont)
+{
+	char	*tmp;
+
+	tmp = ft_strtrim(l, " \t\n");
+	if (!tmp)
+		return ;
+	if (!p->textures[i])
+		cont[0]++;
+	else
+		free(p->textures[i]);
+	p->textures[i] = tmp;
+}
 
 int	has_xpm_ext(const char *s)
 {

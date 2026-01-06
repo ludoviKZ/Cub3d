@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 16:24:28 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/19 17:56:37 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	check_tex(char *l, int *cont, t_parsing *p)
 	int			j;
 	int			k;
 	static char	*tn[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
-	char		*tmp;
 
 	i = 0;
 	while (i < 6)
@@ -29,14 +28,7 @@ void	check_tex(char *l, int *cont, t_parsing *p)
 		while (tn[i][j] != '\0' && l[j + k] == tn[i][j])
 			j++;
 		if (tn[i][j] == '\0' && (l[j + k] == ' ' || l[j + k] == '\t'))
-		{
-			tmp = ft_strtrim(l + j + k, " \t\n");
-			if (!tmp)
-				return ;
-			if (!p->textures[i])
-				cont[0]++;
-			p->textures[i] = tmp;
-		}
+			set_texture(p, i, l + j + k, cont);
 		i++;
 	}
 }
@@ -60,12 +52,12 @@ int	syntax_check_rgb(t_parsing *parsing, char **textures)
 			return (free(trimmed), -1);
 		free(trimmed);
 		if (!parts[0] || !parts[1] || !parts[2] || parts[3])
-			return (printf("Error\n"), mf(parts, NULL), -1);
+			return (mf(parts, NULL), -1);
 		parsing->colors[i - 4] = rgb_to_color(parts);
 		if (parsing->colors[i - 4] == -1)
-			return (printf("Error\n"), mf(parts, NULL), -1);
-		mf(parts, textures[i]);
-		textures[i++] = NULL;
+			return (mf(parts, NULL), -1);
+		mf(parts, NULL);
+		i++;
 	}
 	return (0);
 }
@@ -132,7 +124,7 @@ int	check_textures(t_parsing *p)
 	}
 	p->map_h = check_lines(&p->map[i]);
 	p->map = dup_matrix(&p->map[i], p);
-	if (syntax_check(p, p->textures) == -1)
+	if (!p->map || syntax_check(p, p->textures) == -1)
 		return (-1);
 	p->textures[6] = NULL;
 	return (0);

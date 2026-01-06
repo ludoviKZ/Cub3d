@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/12 17:28:06 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/12/19 17:22:09 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,29 @@ int	mf(char **matrix, char *unused)
 	while (matrix[i])
 	{
 		free(matrix[i]);
+		matrix[i] = NULL;
 		i++;
 	}
 	free(matrix);
 	if (unused)
 		free(unused);
 	return (0);
+}
+
+void	free_textures(char **textures)
+{
+	int	i;
+
+	if (!textures)
+		return ;
+	i = 0;
+	while (i < 7)
+	{
+		if (textures[i])
+			free(textures[i]);
+		i++;
+	}
+	free(textures);
 }
 
 char	**dup_matrix(char **map, t_parsing *p)

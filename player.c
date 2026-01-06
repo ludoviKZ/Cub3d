@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 16:26:51 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/12 17:31:51 by lzorzit          ###   ########.fr       */
+/*   Updated: 2025/12/19 18:04:18 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
+
+static void	destroy_partial_textures(t_vars *vars, t_texture *t, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		if (t->img[i])
+			mlx_destroy_image(vars->mlx, t->img[i]);
+		i++;
+	}
+}
 
 int	init_texture(t_vars *vars, t_texture *t, t_parsing *p)
 {
@@ -26,15 +39,15 @@ int	init_texture(t_vars *vars, t_texture *t, t_parsing *p)
 	t->img[1] = mlx_xpm_file_to_image(vars->mlx, p->textures[1],
 			&tex_w, &tex_h);
 	if (!t->img[1])
-		return (-1);
+		return (destroy_partial_textures(vars, t, 1), -1);
 	t->img[2] = mlx_xpm_file_to_image(vars->mlx, p->textures[2],
 			&tex_w, &tex_h);
 	if (!t->img[2])
-		return (-1);
+		return (destroy_partial_textures(vars, t, 2), -1);
 	t->img[3] = mlx_xpm_file_to_image(vars->mlx, p->textures[3],
 			&tex_w, &tex_h);
 	if (!t->img[3])
-		return (-1);
+		return (destroy_partial_textures(vars, t, 3), -1);
 	t->height = tex_h;
 	t->width = tex_w;
 	return (init_texture_values(t));
@@ -55,7 +68,7 @@ int	init_player(t_vars *vars)
 	if (!vars->texture)
 		return (free(vars->player), -1);
 	if (init_texture(vars, vars->texture, vars->parsing) == -1)
-		return (free(vars->player), free(vars->texture), -1);
+		return (free_init_player(vars), -1);
 	vars->player->x = x;
 	vars->player->y = y;
 	set_player_dir(vars, vars->parsing->pl_dir);
