@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/19 18:23:50 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/06 17:14:57 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,25 @@ void	cleanup(t_vars *g_vars)
 	g_vars = NULL;
 }
 
-t_parsing	*parsing_init(void)
+int	check_extension(char *filename)
+{
+	int	len;
+
+	len = ft_strlen(filename);
+	if (len < 5)
+		return (0);
+	if (ft_strncmp(filename + len - 4, ".cub", 4) == 0)
+		return (1);
+	return (0);
+}
+
+t_parsing	*parsing_init(char **argv)
 {
 	t_parsing	*p;
 	int			i;
 
+	if (!check_extension(argv[1]))
+		return (printf("Error\nInvalid file extension\n"), NULL);
 	p = malloc(sizeof(t_parsing));
 	if (!p)
 		return (NULL);
@@ -96,7 +110,7 @@ int	main(int argc, char **argv)
 
 	if (argc != 2)
 		return (printf("Usage: %s <map_file>\n", argv[0]), 1);
-	p = parsing_init();
+	p = parsing_init(argv);
 	if (!p)
 		return (1);
 	vars = init_vars(p);

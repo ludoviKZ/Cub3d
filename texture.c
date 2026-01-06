@@ -6,17 +6,20 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 18:00:07 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/12 18:08:58 by lzorzit          ###   ########.fr       */
+/*   Updated: 2026/01/06 17:01:37 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-unsigned int	get_pixel(t_texture *tex, int x, int y)
+unsigned int	get_pixel(t_texture *tex, int x, int y, int tex_index)
 {
 	char	*pixel;
 
-	if (!tex || x < 0 || y < 0 || x >= tex->width || y >= tex->height)
+	if (!tex || tex_index < 0 || tex_index >= 4)
+		return (0);
+	if (x < 0 || y < 0 || x >= tex->width[tex_index]
+		|| y >= tex->height[tex_index])
 		return (0);
 	pixel = tex->addr + (y * tex->line_length + x * (tex->bits_per_pixel / 8));
 	return (*(int *)pixel);
@@ -55,14 +58,15 @@ void	draw(t_vars *v, double slice_height, double wallX)
 	{
 		if (slice_height > 1)
 			tex_yf = ((double)(i - v->texture->top) / (slice_height - 1))
-				* (double)(v->texture->height - 1);
+				* (double)(v->texture->height[v->texture->tex_index] - 1);
 		else
 			tex_yf = 0.0;
 		tex_y = (int)(tex_yf + 0.5);
-		tex_x = (int)(wallX * (double)v->texture->width);
+		tex_x = (int)(wallX * (double)v->texture->width[v->texture->tex_index]);
 		tex_set(&tex_y, &tex_x, v);
 		v->texture->dst = v->texture->col_addr + (i * v->texture->col_line_len);
-		*(unsigned int *)v->texture->dst = get_pixel(v->texture, tex_x, tex_y);
+		*(unsigned int *)v->texture->dst = get_pixel(v->texture, tex_x,
+				tex_y, v->texture->tex_index);
 		i++;
 	}
 	draw_background(v, v->texture->top, v->texture->bottom, v->texture->dst);

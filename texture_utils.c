@@ -6,7 +6,7 @@
 /*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:08:25 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/12 18:09:08 by lzorzit          ###   ########.fr       */
+/*   Updated: 2026/01/06 16:44:46 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@ void	tex_set(int *tex_y, int *tex_x, t_vars *v)
 {
 	if (*tex_y < 0)
 		*tex_y = 0;
-	if (*tex_y >= v->texture->height)
-		*tex_y = v->texture->height - 1;
+	if (*tex_y >= v->texture->height[v->texture->tex_index])
+		*tex_y = v->texture->height[v->texture->tex_index] - 1;
 	if (*tex_x < 0)
 		*tex_x = 0;
-	if (*tex_x >= v->texture->width)
-		*tex_x = v->texture->width - 1;
+	if (*tex_x >= v->texture->width[v->texture->tex_index])
+		*tex_x = v->texture->width[v->texture->tex_index] - 1;
 }
 
 void	helper_draw(t_vars *vars, int slice_height)

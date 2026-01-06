@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 18:04:04 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/06 16:58:29 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ typedef struct s_texture
 {
 	int		tex_i[4];
 	void	*img[4];
-	int		width;
-	int		height;
+	int		width[4];
+	int		height[4];
 	char	*addr;
 	int		bits_per_pixel;
 	int		line_length;

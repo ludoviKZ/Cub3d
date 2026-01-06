@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 14:04:30 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 14:25:04 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/06 17:24:18 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ void	draw_field_of_view(t_vars *vars)
 
 	if (!vars || !vars->player || !vars->map)
 		return ;
-	printf("Drawing field of view for player at (%.2f, %.2f) facing %d degrees\n",
-		vars->player->x, vars->player->y, vars->player->dir);
 	r.fov_angle = 60;
 	r.num_rays = MAP_WIDTH;
 	r.max_length = 400;

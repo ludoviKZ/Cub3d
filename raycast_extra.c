@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   raycast_extra.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 13:48:41 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 14:30:11 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/06 17:22:59 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-/* Compute absolute delta distance for a ray direction axis without using
-   the conditional operator. Variables declared first then assigned. */
 double	compute_delta_dist(double rayDir)
 {
 	double	res;

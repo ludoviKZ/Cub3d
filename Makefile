@@ -1,6 +1,6 @@
 FILES = main.c player.c parsing.c parsing_utils.c utils.c checks.c checks_utils.c raycast.c raycast_extra.c texture.c texture_utils.c draw_slice.c movement.c key_hook.c
 OBJ = $(FILES:.c=.o)
-NAME = Cub3D
+NAME = cub3D
 MLX_PATH = minilibx/
 MLX_LIB = $(MLX_PATH)libmlx.a
 LIBFT_PATH = libft/
