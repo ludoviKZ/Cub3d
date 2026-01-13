@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 17:51:06 by lzorzit           #+#    #+#             */
-/*   Updated: 2025/12/19 14:17:42 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/13 11:13:45 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	rotate(t_vars *vars, int angle)
 		vars->player->dir -= 360;
 	else if (vars->player->dir < 0)
 		vars->player->dir += 360;
-	printf("Player direction: %d degrees\n", vars->player->dir);
 }
 
 int	validate_move(t_vars *vars, double *ver, double *side)
