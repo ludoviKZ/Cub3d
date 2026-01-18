@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/13 14:07:37 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	syntax_check(t_parsing *parsing, char **textures)
 	return (syntax_check_rgb(parsing, textures));
 }
 
-static int	dup_and_set_map(t_parsing *p, int i)
+int	dup_and_set_map(t_parsing *p, int i)
 {
 	char	**new_map;
 

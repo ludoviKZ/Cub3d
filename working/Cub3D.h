@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/13 14:07:37 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,15 @@ int			has_xpm_ext(const char *s);
 int			skip_spaces(char *line, int *index);
 int			check_matr(char **str);
 int			check_lines(char **map);
+char		**pad_map(char **map);
+int			get_max_width(char **map);
+char		*pad_line(char *line, int max_width);
+int			check_borders_and_player(t_parsing *p, char **tmp, int i, int j);
+int			validate_map_content(t_parsing *p, char **tmp);
+int			dup_and_set_map(t_parsing *p, int i);
+void		free_dup_matrix(char **new_map, int count);
+int			handle_parsing_error(t_parsing *p, t_vars *vars);
+void		destroy_partial_textures(t_vars *vars, t_texture *t, int count);
 void		set_texture(t_parsing *p, int i, char *l, int *cont);
 void		free_init_player(t_vars *vars);
 void		print_map(char **map);

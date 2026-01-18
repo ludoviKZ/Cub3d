@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:45:37 by lzorzit           #+#    #+#             */
-/*   Updated: 2026/01/13 14:07:37 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	cleanup(t_vars *g_vars)
 	g_vars = NULL;
 }
 
-static int	handle_parsing_error(t_parsing *p, t_vars *vars)
+int	handle_parsing_error(t_parsing *p, t_vars *vars)
 {
 	if (p->map)
 		mf(p->map, NULL);

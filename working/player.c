@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 16:26:51 by lzorzit           #+#    #+#             */
-/*   Updated: 2026/01/06 17:00:22 by lzorzit          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-static void	destroy_partial_textures(t_vars *vars, t_texture *t, int count)
+void	destroy_partial_textures(t_vars *vars, t_texture *t, int count)
 {
 	int	i;
 

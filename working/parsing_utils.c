@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 14:28:10 by kbossio           #+#    #+#             */
-/*   Updated: 2025/12/19 18:04:50 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,19 @@ int	check_player(t_parsing *p, char **map, int i, int j)
 
 int	flood_fill(char **map, int x, int y)
 {
-	if (y < 0 || !map[y] || x < 0 || x >= (int)ft_strlen(map[y]))
+	int	len;
+
+	if (y < 0 || !map[y] || x < 0)
+		return (-1);
+	len = ft_strlen(map[y]);
+	if (map[y][len - 1] == '\n')
+		len--;
+	if (x >= len)
+		return (-1);
+	if (map[y][x] == '1' || map[y][x] == 'F')
 		return (0);
-	if (map[y][x] == '1' || map[y][x] == 'F'
-		|| map[y][x] == '\n' || map[y][x] == ' ')
-		return (0);
+	if (map[y][x] == ' ')
+		return (-1);
 	if (map[y][x] != 'N' && map[y][x] != 'S'
 		&& map[y][x] != 'E' && map[y][x] != 'W' && map[y][x] != '0')
 		return (-1);

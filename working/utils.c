@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 18:52:52 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/13 14:07:37 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	free_textures(char **textures)
 	free(textures);
 }
 
-static void	free_dup_matrix(char **new_map, int count)
+void	free_dup_matrix(char **new_map, int count)
 {
 	int	j;
 

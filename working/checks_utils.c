@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 14:21:52 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/13 14:07:37 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:48:23 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,27 @@ int	check_lines(char **map)
 {
 	int	i;
 	int	j;
+	int	last_valid;
 
 	i = 0;
+	last_valid = -1;
 	while (map[i])
 	{
 		j = 0;
 		skip_spaces(map[i], &j);
-		if (map[i][j] == '\n' || map[i][j] == '\0')
-			return (i);
+		if (map[i][j] != '\n' && map[i][j] != '\0')
+			last_valid = i;
 		i++;
 	}
-	return (i);
+	if (last_valid == -1)
+		return (0);
+	i = -1;
+	while (++i < last_valid + 1)
+	{
+		j = 0;
+		skip_spaces(map[i], &j);
+		if (map[i][j] == '\n' || map[i][j] == '\0')
+			return (-1);
+	}
+	return (last_valid + 1);
 }

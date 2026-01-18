@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/13 14:11:57 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	check_char(char **map)
 	return (0);
 }
 
-static int	check_borders_and_player(t_parsing *p, char **tmp, int i, int j)
+int	check_borders_and_player(t_parsing *p, char **tmp, int i, int j)
 {
 	int	len;
 
@@ -48,7 +48,7 @@ static int	check_borders_and_player(t_parsing *p, char **tmp, int i, int j)
 	return (0);
 }
 
-static int	validate_map_content(t_parsing *p, char **tmp)
+int	validate_map_content(t_parsing *p, char **tmp)
 {
 	int	i;
 	int	j;
@@ -71,12 +71,17 @@ static int	validate_map_content(t_parsing *p, char **tmp)
 int	check_map(t_parsing *p, char **map)
 {
 	char	**tmp;
+	char	**padded;
 
 	p->pl_x = -1;
-	tmp = dup_matrix(map);
+	padded = pad_map(map);
+	if (!padded)
+		return (-1);
+	tmp = dup_matrix(padded);
+	mf(padded, NULL);
 	if (!tmp || check_char(tmp) == -1 || validate_map_content(p, tmp) == -1
 		|| p->pl_x == -1 || flood_fill(tmp, p->pl_x, p->pl_y) == -1)
-		return (mf(tmp, NULL), -1);
+		return (print_map(tmp), mf(tmp, NULL), -1);
 	return (mf(tmp, NULL), 0);
 }
 
