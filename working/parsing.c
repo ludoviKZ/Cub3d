@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 17:12:56 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	check_char(char **map)
 		while (map[i][++j] && map[i][j] != '\n')
 			if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != 'N'
 				&& map[i][j] != 'S' && map[i][j] != 'E'
-				&& map[i][j] != 'W' && map[i][j] != ' ')
+				&& map[i][j] != 'W' && map[i][j] != ' ' && map[i][j] != '\t')
 				return (-1);
 		i++;
 	}
@@ -40,7 +40,7 @@ int	check_borders_and_player(t_parsing *p, char **tmp, int i, int j)
 		len--;
 	if (i == 0 || tmp[i + 1] == NULL || j == 0 || j == len - 1)
 	{
-		if (tmp[i][j] != '1' && tmp[i][j] != ' ')
+		if (tmp[i][j] != '1' && tmp[i][j] != ' ' && tmp[i][j] != '\t')
 			return (-1);
 	}
 	if (check_player(p, tmp, i, j) > 1)
