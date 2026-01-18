@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 17:28:42 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,7 @@ int			line_count(char *map_file);
 int			mf(char **matrix, char *unused);
 void		free_textures(char **textures);
 int			check_textures(t_parsing *p);
+int			check_tex(char *l, int *cont, t_parsing *p);
 int			syntax_check_rgb(t_parsing *parsing, char **textures);
 char		**dup_matrix(char **map);
 void		draw_texture(t_vars *vars, int ray, int slice_height, double wallX);
@@ -193,7 +194,7 @@ int			dup_and_set_map(t_parsing *p, int i);
 void		free_dup_matrix(char **new_map, int count);
 int			handle_parsing_error(t_parsing *p, t_vars *vars);
 void		destroy_partial_textures(t_vars *vars, t_texture *t, int count);
-void		set_texture(t_parsing *p, int i, char *l, int *cont);
+int			set_texture(t_parsing *p, int i, char *l, int *cont);
 void		free_init_player(t_vars *vars);
 void		print_map(char **map);
 

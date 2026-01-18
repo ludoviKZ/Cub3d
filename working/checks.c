@@ -6,31 +6,33 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:13:33 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 17:35:01 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-void	check_tex(char *l, int *cont, t_parsing *p)
+int	check_tex(char *l, int *cont, t_parsing *p)
 {
 	int			i;
 	int			j;
 	int			k;
 	static char	*tn[7] = {"NO", "SO", "WE", "EA", "F", "C", NULL};
 
-	i = 0;
-	while (i < 6)
+	i = -1;
+	k = 0;
+	skip_spaces(l, &k);
+	if (l[k] == '\0' || l[k] == '\n')
+		return (0);
+	while (++i < 6)
 	{
 		j = 0;
-		k = 0;
-		skip_spaces(l, &k);
 		while (tn[i][j] != '\0' && l[j + k] == tn[i][j])
 			j++;
 		if (tn[i][j] == '\0' && (l[j + k] == ' ' || l[j + k] == '\t'))
-			set_texture(p, i, l + j + k, cont);
-		i++;
+			return (set_texture(p, i, l + j + k, cont));
 	}
+	return (-1);
 }
 
 int	syntax_check_helper(char **textures, int i)
@@ -82,7 +84,8 @@ int	check_textures(t_parsing *p)
 	i = 0;
 	cont = 0;
 	while (p->map[i] && cont < 6)
-		check_tex(p->map[i++], &cont, p);
+		if (check_tex(p->map[i++], &cont, p) == -1)
+			return (-1);
 	if (cont < 6)
 		return (-1);
 	while (p->map[i])
@@ -98,6 +101,5 @@ int	check_textures(t_parsing *p)
 		return (-1);
 	if (syntax_check(p, p->textures) == -1)
 		return (-1);
-	p->textures[6] = NULL;
-	return (0);
+	return (p->textures[6] = NULL, 0);
 }
