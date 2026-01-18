@@ -6,13 +6,13 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 14:21:52 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/18 16:48:23 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 17:28:42 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cub3D.h"
 
-void	set_texture(t_parsing *p, int i, char *l, int *cont)
+int	set_texture(t_parsing *p, int i, char *l, int *cont)
 {
 	char	*tmp;
 
@@ -21,13 +21,13 @@ void	set_texture(t_parsing *p, int i, char *l, int *cont)
 	{
 		if (tmp)
 			free(tmp);
-		return ;
+		return (0);
 	}
 	if (p->textures[i])
-		free(p->textures[i]);
-	else
-		cont[0]++;
+		return (free(tmp), -1);
 	p->textures[i] = tmp;
+	cont[0]++;
+	return (0);
 }
 
 int	has_xpm_ext(const char *s)
