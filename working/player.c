@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 16:26:51 by lzorzit           #+#    #+#             */
-/*   Updated: 2026/01/18 16:49:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 16:51:04 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,9 @@ void	set_player_dir(t_vars *vars, char dir)
 	else if (dir == 'S')
 		vars->player->dir = 90;
 	else if (dir == 'E')
-		vars->player->dir = 180;
-	else if (dir == 'W')
 		vars->player->dir = 0;
+	else if (dir == 'W')
+		vars->player->dir = 180;
 	else
 		vars->player->dir = 0;
 }
