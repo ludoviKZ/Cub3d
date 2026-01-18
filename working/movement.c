@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lzorzit <lzorzit@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 17:51:06 by lzorzit           #+#    #+#             */
-/*   Updated: 2026/01/13 11:13:45 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 18:10:38 by lzorzit          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,8 @@ int	validate_move(t_vars *vars, double *ver, double *side)
 	if (move.cc < 0
 		|| move.cc >= ft_strlen(vars->map[move.cr]))
 		return (-1);
-	if (vars->map[move.cr][move.cc] == '1')
-		return (-1);
-	if (vars->map[move.cr][move.cc] == 'F')
+	if (vars->map[move.cr][move.cc] == '1' || vars->map[move.cr][move.cc] == ' '
+		|| vars->map[move.cr][move.cc] == 'F')
 		return (-1);
 	if (check_for_close_walls(vars, move) == -1)
 		return (-1);
