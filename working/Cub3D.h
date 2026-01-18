@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 17:35:35 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/18 17:28:42 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 18:07:35 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,6 @@ int			check_lines(char **map);
 char		**pad_map(char **map);
 int			get_max_width(char **map);
 char		*pad_line(char *line, int max_width);
-int			check_borders_and_player(t_parsing *p, char **tmp, int i, int j);
 int			validate_map_content(t_parsing *p, char **tmp);
 int			dup_and_set_map(t_parsing *p, int i);
 void		free_dup_matrix(char **new_map, int count);

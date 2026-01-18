@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 17:28:12 by kbossio           #+#    #+#             */
-/*   Updated: 2026/01/18 17:12:56 by kbossio          ###   ########.fr       */
+/*   Updated: 2026/01/18 18:07:35 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,6 @@ int	check_char(char **map)
 	return (0);
 }
 
-int	check_borders_and_player(t_parsing *p, char **tmp, int i, int j)
-{
-	int	len;
-
-	len = ft_strlen(tmp[i]);
-	if (tmp[i][len - 1] == '\n')
-		len--;
-	if (i == 0 || tmp[i + 1] == NULL || j == 0 || j == len - 1)
-	{
-		if (tmp[i][j] != '1' && tmp[i][j] != ' ' && tmp[i][j] != '\t')
-			return (-1);
-	}
-	if (check_player(p, tmp, i, j) > 1)
-		return (-1);
-	return (0);
-}
-
 int	validate_map_content(t_parsing *p, char **tmp)
 {
 	int	i;
@@ -59,7 +42,7 @@ int	validate_map_content(t_parsing *p, char **tmp)
 		j = 0;
 		while (tmp[i][j] != '\n' && tmp[i][j] != '\0')
 		{
-			if (check_borders_and_player(p, tmp, i, j) == -1)
+			if (check_player(p, tmp, i, j) > 1)
 				return (-1);
 			j++;
 		}
